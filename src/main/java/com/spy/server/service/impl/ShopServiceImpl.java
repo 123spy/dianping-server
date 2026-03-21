@@ -1,6 +1,5 @@
 package com.spy.server.service.impl;
 
-import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
@@ -12,7 +11,6 @@ import com.spy.server.constant.CommonConstant;
 import com.spy.server.exception.BusinessException;
 import com.spy.server.model.domain.Category;
 import com.spy.server.model.domain.Shop;
-import com.spy.server.model.domain.Shop;
 import com.spy.server.model.domain.User;
 import com.spy.server.model.dto.shop.ShopAddRequest;
 import com.spy.server.model.dto.shop.ShopQueryRequest;
@@ -23,7 +21,6 @@ import com.spy.server.service.CategoryService;
 import com.spy.server.service.ShopService;
 import com.spy.server.mapper.ShopMapper;
 import com.spy.server.service.UserService;
-import com.spy.server.utils.AccountUtil;
 import com.spy.server.utils.SqlUtil;
 import jakarta.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
