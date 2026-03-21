@@ -50,8 +50,7 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop>
 
     @Resource
     private CategoryService categoryService;
-    @Autowired
-    private ShopService shopService;
+
 
     @Override
     public ShopVO getShopVO(Shop shop) {

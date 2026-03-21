@@ -8,11 +8,13 @@ import com.spy.server.common.ErrorCode;
 import com.spy.server.constant.UserConstant;
 import com.spy.server.exception.BusinessException;
 import com.spy.server.model.domain.Favorite;
+import com.spy.server.model.domain.User;
 import com.spy.server.model.dto.favorite.FavoriteAddRequest;
 import com.spy.server.model.dto.favorite.FavoriteQueryRequest;
 import com.spy.server.model.dto.favorite.FavoriteUpdateRequest;
 import com.spy.server.model.vo.FavoriteVO;
 import com.spy.server.service.FavoriteService;
+import com.spy.server.service.UserService;
 import com.spy.server.utils.ResultUtil;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,13 +29,20 @@ public class FavoriteController {
     @Resource
     private FavoriteService favoriteService;
 
+    @Resource
+    private UserService userService;
+
     @PostMapping("/add")
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
-    public BaseResponse<Long> addFavorite(@RequestBody FavoriteAddRequest favoriteAddRequest) {
-        // 校验
-        if (favoriteAddRequest == null) {
+    public BaseResponse<Long> addFavorite(@RequestBody FavoriteAddRequest favoriteAddRequest,
+                                          HttpServletRequest request) {
+        if (favoriteAddRequest == null || favoriteAddRequest.getShopId() == null || favoriteAddRequest.getShopId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
+
+        User loginUser = userService.getLoginUser(request); // 你项目里如果已有这个方法，直接用
+        favoriteAddRequest.setUserId(loginUser.getId());
+
         Long id = favoriteService.addFavorite(favoriteAddRequest);
         return ResultUtil.success(id);
     }

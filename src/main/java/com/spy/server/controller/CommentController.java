@@ -8,11 +8,13 @@ import com.spy.server.common.ErrorCode;
 import com.spy.server.constant.UserConstant;
 import com.spy.server.exception.BusinessException;
 import com.spy.server.model.domain.Comment;
+import com.spy.server.model.domain.User;
 import com.spy.server.model.dto.comment.CommentAddRequest;
 import com.spy.server.model.dto.comment.CommentQueryRequest;
 import com.spy.server.model.dto.comment.CommentUpdateRequest;
 import com.spy.server.model.vo.CommentVO;
 import com.spy.server.service.CommentService;
+import com.spy.server.service.UserService;
 import com.spy.server.utils.ResultUtil;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,13 +29,20 @@ public class CommentController {
     @Resource
     private CommentService commentService;
 
+    @Resource
+    private UserService userService;
+
     @PostMapping("/add")
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
-    public BaseResponse<Long> addComment(@RequestBody CommentAddRequest commentAddRequest) {
-        // 校验
-        if (commentAddRequest == null) {
+    public BaseResponse<Long> addComment(@RequestBody CommentAddRequest commentAddRequest,
+                                         HttpServletRequest request) {
+        if (commentAddRequest == null || commentAddRequest.getShopId() == null || commentAddRequest.getShopId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
+
+        User loginUser = userService.getLoginUser(request);
+        commentAddRequest.setUserId(loginUser.getId());
+
         Long id = commentService.addComment(commentAddRequest);
         return ResultUtil.success(id);
     }

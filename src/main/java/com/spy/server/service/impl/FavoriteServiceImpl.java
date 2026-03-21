@@ -5,46 +5,34 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.google.gson.Gson;
 import com.spy.server.common.ErrorCode;
 import com.spy.server.constant.CommonConstant;
 import com.spy.server.exception.BusinessException;
-import com.spy.server.model.domain.*;
+import com.spy.server.mapper.FavoriteMapper;
 import com.spy.server.model.domain.Favorite;
+import com.spy.server.model.domain.Shop;
+import com.spy.server.model.domain.User;
 import com.spy.server.model.dto.favorite.FavoriteAddRequest;
 import com.spy.server.model.dto.favorite.FavoriteQueryRequest;
 import com.spy.server.model.dto.favorite.FavoriteUpdateRequest;
 import com.spy.server.model.vo.FavoriteVO;
 import com.spy.server.model.vo.ShopVO;
 import com.spy.server.model.vo.UserVO;
-import com.spy.server.service.CategoryService;
 import com.spy.server.service.FavoriteService;
-import com.spy.server.mapper.FavoriteMapper;
 import com.spy.server.service.ShopService;
 import com.spy.server.service.UserService;
 import com.spy.server.utils.SqlUtil;
 import jakarta.annotation.Resource;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
-* @author OUC
-* @description 针对表【favorite(收藏表)】的数据库操作Service实现
-* @createDate 2026-03-20 19:51:32
-*/
 @Service
-public class FavoriteServiceImpl extends ServiceImpl<FavoriteMapper, Favorite>
-    implements FavoriteService{
-
-
-    private final Gson gson = new Gson();
+public class FavoriteServiceImpl extends ServiceImpl<FavoriteMapper, Favorite> implements FavoriteService {
 
     @Resource
     private UserService userService;
@@ -54,78 +42,106 @@ public class FavoriteServiceImpl extends ServiceImpl<FavoriteMapper, Favorite>
 
     @Override
     public FavoriteVO getFavoriteVO(Favorite favorite) {
-        FavoriteVO favoriteVO = new FavoriteVO();
-        if(favorite==null){
-            return favoriteVO;
+        if (favorite == null) {
+            return null;
         }
-        BeanUtils.copyProperties(favorite,favoriteVO);
+        FavoriteVO favoriteVO = new FavoriteVO();
+        BeanUtils.copyProperties(favorite, favoriteVO);
 
         UserVO userVO = userService.getUserVO(userService.getById(favorite.getUserId()));
         favoriteVO.setUserVO(userVO);
 
         ShopVO shopVO = shopService.getShopVO(shopService.getById(favorite.getShopId()));
         favoriteVO.setShopVO(shopVO);
-
         return favoriteVO;
     }
 
     @Override
     public Long addFavorite(FavoriteAddRequest favoriteAddRequest) {
-        Favorite favorite = new Favorite();
-        BeanUtils.copyProperties(favoriteAddRequest, favorite);
+        if (favoriteAddRequest == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
 
         Long userId = favoriteAddRequest.getUserId();
+        Long shopId = favoriteAddRequest.getShopId();
+        if (userId == null || userId <= 0 || shopId == null || shopId <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户或店铺参数错误");
+        }
+
         User user = userService.getById(userId);
-        if(user == null){
+        if (user == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户不存在");
         }
 
-        Long shopId = favoriteAddRequest.getShopId();
-
         Shop shop = shopService.getById(shopId);
-        if(shop == null){
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "商品不存在");
+        if (shop == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "店铺不存在");
         }
 
-        // 插入数据
-        this.save(favorite);
-        return favorite.getId();
+        boolean exists = this.lambdaQuery()
+                .eq(Favorite::getUserId, userId)
+                .eq(Favorite::getShopId, shopId)
+                .exists();
+        if (exists) {
+            throw new BusinessException(ErrorCode.OPERATION_ERROR, "请勿重复收藏");
+        }
 
+        Favorite favorite = new Favorite();
+        BeanUtils.copyProperties(favoriteAddRequest, favorite);
+
+        boolean saved = this.save(favorite);
+        if (!saved) {
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "收藏失败");
+        }
+        return favorite.getId();
     }
 
     @Override
     public Boolean updateFavorite(FavoriteUpdateRequest favoriteUpdateRequest) {
-        Favorite oldFavorite = this.getById(favoriteUpdateRequest.getId());
-        if(oldFavorite == null) {
+        if (favoriteUpdateRequest == null || favoriteUpdateRequest.getId() == null || favoriteUpdateRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
 
-        Favorite favorite = new Favorite();
-
-        BeanUtils.copyProperties(oldFavorite, favorite);
+        Favorite oldFavorite = this.getById(favoriteUpdateRequest.getId());
+        if (oldFavorite == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "收藏记录不存在");
+        }
 
         Long userId = favoriteUpdateRequest.getUserId();
-        User user = userService.getById(userId);
-        if(user == null){
+        Long shopId = favoriteUpdateRequest.getShopId();
+        if (userId == null || userId <= 0 || shopId == null || shopId <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户或店铺参数错误");
+        }
+
+        if (userService.getById(userId) == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户不存在");
         }
-
-        Long shopId = favoriteUpdateRequest.getShopId();
-
-        Shop shop = shopService.getById(shopId);
-        if(shop == null){
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "商品不存在");
+        if (shopService.getById(shopId) == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "店铺不存在");
         }
 
-        // 插入数据
-        boolean result = this.updateById(favorite);
-        return result;
+        boolean duplicate = this.lambdaQuery()
+                .eq(Favorite::getUserId, userId)
+                .eq(Favorite::getShopId, shopId)
+                .ne(Favorite::getId, favoriteUpdateRequest.getId())
+                .exists();
+        if (duplicate) {
+            throw new BusinessException(ErrorCode.OPERATION_ERROR, "该收藏关系已存在");
+        }
 
+        Favorite favorite = new Favorite();
+        BeanUtils.copyProperties(favoriteUpdateRequest, favorite); // 关键修复点
+
+        boolean updated = this.updateById(favorite);
+        if (!updated) {
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "更新失败");
+        }
+        return true;
     }
 
     @Override
     public Wrapper<Favorite> getQueryWrapper(FavoriteQueryRequest favoriteQueryRequest) {
-        if(favoriteQueryRequest == null) {
+        if (favoriteQueryRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
 
@@ -134,21 +150,19 @@ public class FavoriteServiceImpl extends ServiceImpl<FavoriteMapper, Favorite>
         Long shopId = favoriteQueryRequest.getShopId();
         Date createTime = favoriteQueryRequest.getCreateTime();
         Date updateTime = favoriteQueryRequest.getUpdateTime();
-        int current = favoriteQueryRequest.getCurrent();
-        int pageSize = favoriteQueryRequest.getPageSize();
-        String searchText = favoriteQueryRequest.getSearchText();
         String sortField = favoriteQueryRequest.getSortField();
         String sortOrder = favoriteQueryRequest.getSortOrder();
 
-
-
         QueryWrapper<Favorite> queryWrapper = new QueryWrapper<>();
-
         queryWrapper.eq(id != null, "id", id);
         queryWrapper.eq(userId != null, "userId", userId);
         queryWrapper.eq(shopId != null, "shopId", shopId);
+        queryWrapper.ge(createTime != null, "createTime", createTime);
+        queryWrapper.ge(updateTime != null, "updateTime", updateTime);
+        queryWrapper.eq("isDelete", 0);
 
-        queryWrapper.orderBy(SqlUtil.validSortField(sortField), sortOrder.equals(CommonConstant.SORT_ORDER_ASC), sortField);
+        boolean asc = CommonConstant.SORT_ORDER_ASC.equals(sortOrder);
+        queryWrapper.orderBy(SqlUtil.validSortField(sortField), asc, sortField);
         return queryWrapper;
     }
 
@@ -157,25 +171,17 @@ public class FavoriteServiceImpl extends ServiceImpl<FavoriteMapper, Favorite>
         if (CollectionUtils.isEmpty(records)) {
             return new ArrayList<>();
         }
-        List<FavoriteVO> favoriteVOList = records.stream().map(favorite -> {
-            return getFavoriteVO(favorite);
-        }).collect(Collectors.toList());
-        return favoriteVOList;
+        return records.stream().map(this::getFavoriteVO).collect(Collectors.toList());
     }
 
     @Override
     public Page<FavoriteVO> listFavoriteVOByPage(FavoriteQueryRequest favoriteQueryRequest) {
         int current = favoriteQueryRequest.getCurrent();
         int pageSize = favoriteQueryRequest.getPageSize();
+
         Page<Favorite> favoritePage = this.page(new Page<>(current, pageSize), this.getQueryWrapper(favoriteQueryRequest));
         Page<FavoriteVO> favoriteVOPage = new Page<>(current, pageSize, favoritePage.getTotal());
-        List<FavoriteVO> favoriteVoList = this.getFavoriteVO(favoritePage.getRecords());
-        favoriteVOPage.setRecords(favoriteVoList);
+        favoriteVOPage.setRecords(this.getFavoriteVO(favoritePage.getRecords()));
         return favoriteVOPage;
     }
-    
 }
-
-
-
-
