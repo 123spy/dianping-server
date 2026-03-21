@@ -58,10 +58,6 @@ public class ShopController {
         if (shopUpdateRequest == null || shopUpdateRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        Shop oldShop = shopService.getById(shopUpdateRequest.getId());
-        if (oldShop == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
         Boolean result = shopService.updateShop(shopUpdateRequest);
 
         return ResultUtil.success(result);
@@ -100,6 +96,9 @@ public class ShopController {
         }
         int current = shopQueryRequest.getCurrent();
         int pageSize = shopQueryRequest.getPageSize();
+        if(pageSize > 100) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "分页查询过大");
+        }
         Page<Shop> shopPage = shopService.page(new Page<>(current, pageSize), shopService.getQueryWrapper(shopQueryRequest));
         return ResultUtil.success(shopPage);
     }

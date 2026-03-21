@@ -308,7 +308,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             );
         }
 
-        queryWrapper.orderBy(SqlUtil.validSortField(sortField), sortOrder.equals(CommonConstant.SORT_ORDER_ASC), sortField);
+        queryWrapper.orderBy(
+                SqlUtil.validSortField(sortField),
+                CommonConstant.SORT_ORDER_ASC.equals(sortOrder),
+                sortField
+        );
         return queryWrapper;
     }
 

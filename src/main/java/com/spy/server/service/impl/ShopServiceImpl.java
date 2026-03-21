@@ -1,5 +1,6 @@
 package com.spy.server.service.impl;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
@@ -27,6 +28,7 @@ import com.spy.server.utils.SqlUtil;
 import jakarta.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -51,6 +53,8 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop>
 
     @Resource
     private CategoryService categoryService;
+    @Autowired
+    private ShopService shopService;
 
     @Override
     public ShopVO getShopVO(Shop shop) {
@@ -64,38 +68,34 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop>
         shopVO.setUserVO(userVO);
 
         String tags = shop.getTags();
-        List list = gson.fromJson(tags, List.class);
-        shopVO.setTags(list);
+        if (StringUtils.isBlank(tags)) {
+            shopVO.setTags(new ArrayList<>());
+        } else {
+            try {
+                List list = gson.fromJson(tags, List.class);
+                shopVO.setTags(list == null ? new ArrayList<>() : list);
+            } catch (Exception e) {
+                shopVO.setTags(new ArrayList<>());
+            }
+        }
+
 
         return shopVO;
     }
 
     @Override
     public Long addShop(ShopAddRequest shopAddRequest) {
-        Shop shop = new Shop();
-        BeanUtils.copyProperties(shopAddRequest, shop);
-
-        Long managerId = shopAddRequest.getManagerId();
-        User manager = userService.getById(managerId);
-        if(manager == null){
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户不存在");
+        if (shopAddRequest == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
 
+        Long managerId = shopAddRequest.getManagerId();
         String name = shopAddRequest.getName();
         String description = shopAddRequest.getDescription();
         List<String> tags = shopAddRequest.getTags();
-        String tagJson = gson.toJson(tags);
-        shop.setTags(tagJson);
-
         Long categoryId = shopAddRequest.getCategoryId();
-        Category category = categoryService.getById(categoryId);
-        if(category == null){
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "分类不存在");
-        }
-
         BigDecimal longitude = shopAddRequest.getLongitude();
         BigDecimal latitude = shopAddRequest.getLatitude();
-
         String address = shopAddRequest.getAddress();
         String city = shopAddRequest.getCity();
         Integer businessStatus = shopAddRequest.getBusinessStatus();
@@ -105,68 +105,131 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop>
         Integer favoriteCount = shopAddRequest.getFavoriteCount();
         Integer viewCount = shopAddRequest.getViewCount();
 
-        // todo 这里这样加锁真的可以吗？
-        String point = longitude.toString() + "," + latitude.toString();
+        if (managerId == null || managerId <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "店长参数错误");
+        }
+        User manager = userService.getById(managerId);
+        if (manager == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "店长不存在");
+        }
 
-        // todo 怎么加锁
+        if (StringUtils.isBlank(name)) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "名称为空");
+        }
 
-        // 插入数据
-        this.save(shop);
-        return shop.getId();
-
-    }
-
-    @Override
-    public Boolean updateShop(ShopUpdateRequest shopUpdateRequest) {
-        Shop oldShop = this.getById(shopUpdateRequest.getId());
-        if(oldShop == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        if (categoryId == null || categoryId <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "类别参数错误");
+        }
+        Category category = categoryService.getById(categoryId);
+        if (category == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "类别不存在");
         }
 
         Shop shop = new Shop();
+        shop.setManagerId(managerId);
+        shop.setName(name.trim());
+        shop.setDescription(description);
 
-        BeanUtils.copyProperties(oldShop, shop);
-
-        Long managerId = shopUpdateRequest.getManagerId();
-        if(managerId != null) {
-            User manager = userService.getById(managerId);
-            if(manager == null){
-                throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户不存在");
-            }
+        if (tags == null) {
+            shop.setTags(gson.toJson(new ArrayList<>()));
+        } else {
+            shop.setTags(gson.toJson(tags));
         }
 
+        shop.setCategoryId(categoryId);
+        shop.setLongitude(longitude);
+        shop.setLatitude(latitude);
+        shop.setAddress(address);
+        shop.setCity(city);
+        shop.setBusinessStatus(businessStatus);
+        shop.setAuditStatus(auditStatus);
+        shop.setAvgScore(avgScore);
+        shop.setCommentCount(commentCount);
+        shop.setFavoriteCount(favoriteCount);
+        shop.setViewCount(viewCount);
 
-        String name = shopUpdateRequest.getName();
-        String description = shopUpdateRequest.getDescription();
-        List<String> tags = shopUpdateRequest.getTags();
-        String tagJson = gson.toJson(tags);
-        shop.setTags(tagJson);
+        boolean result = this.save(shop);
+        if (!result) {
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "新增店铺失败");
+        }
 
+        return shop.getId();
+    }
 
-        Long categoryId = shopUpdateRequest.getCategoryId();
-        if(categoryId != null) {
-            Category category = categoryService.getById(categoryId);
-            if(category == null){
+    @Override
+    public Boolean updateShop(ShopUpdateRequest req) {
+        if (req == null || req.getId() == null || req.getId() <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+
+        Shop oldShop = this.getById(req.getId());
+        if (oldShop == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "店铺不存在");
+        }
+
+        Shop updateShop = new Shop();
+        updateShop.setId(req.getId());
+
+        if (req.getManagerId() != null) {
+            User manager = userService.getById(req.getManagerId());
+            if (manager == null) {
+                throw new BusinessException(ErrorCode.PARAMS_ERROR, "店长不存在");
+            }
+            updateShop.setManagerId(req.getManagerId());
+        }
+
+        if (StringUtils.isNotBlank(req.getName())) {
+            updateShop.setName(req.getName().trim());
+        }
+
+        if (StringUtils.isNotBlank(req.getDescription())) {
+            updateShop.setDescription(req.getDescription().trim());
+        }
+
+        if (req.getTags() != null) {
+            updateShop.setTags(gson.toJson(req.getTags()));
+        }
+
+        if (req.getCategoryId() != null) {
+            Category category = categoryService.getById(req.getCategoryId());
+            if (category == null) {
                 throw new BusinessException(ErrorCode.PARAMS_ERROR, "分类不存在");
             }
+            updateShop.setCategoryId(req.getCategoryId());
         }
 
+        if (req.getLongitude() != null) {
+            updateShop.setLongitude(req.getLongitude());
+        }
+        if (req.getLatitude() != null) {
+            updateShop.setLatitude(req.getLatitude());
+        }
+        if (StringUtils.isNotBlank(req.getAddress())) {
+            updateShop.setAddress(req.getAddress().trim());
+        }
+        if (StringUtils.isNotBlank(req.getCity())) {
+            updateShop.setCity(req.getCity().trim());
+        }
+        if (req.getBusinessStatus() != null) {
+            updateShop.setBusinessStatus(req.getBusinessStatus());
+        }
+        if (req.getAuditStatus() != null) {
+            updateShop.setAuditStatus(req.getAuditStatus());
+        }
+        if (req.getAvgScore() != null) {
+            updateShop.setAvgScore(req.getAvgScore());
+        }
+        if (req.getCommentCount() != null) {
+            updateShop.setCommentCount(req.getCommentCount());
+        }
+        if (req.getFavoriteCount() != null) {
+            updateShop.setFavoriteCount(req.getFavoriteCount());
+        }
+        if (req.getViewCount() != null) {
+            updateShop.setViewCount(req.getViewCount());
+        }
 
-        BigDecimal longitude = shopUpdateRequest.getLongitude();
-        BigDecimal latitude = shopUpdateRequest.getLatitude();
-        String address = shopUpdateRequest.getAddress();
-        String city = shopUpdateRequest.getCity();
-        Integer businessStatus = shopUpdateRequest.getBusinessStatus();
-        Integer auditStatus = shopUpdateRequest.getAuditStatus();
-        BigDecimal avgScore = shopUpdateRequest.getAvgScore();
-        Integer commentCount = shopUpdateRequest.getCommentCount();
-        Integer favoriteCount = shopUpdateRequest.getFavoriteCount();
-        Integer viewCount = shopUpdateRequest.getViewCount();
-
-        // 插入数据
-        boolean result = this.updateById(shop);
-        return result;
-
+        return this.updateById(updateShop);
     }
 
     @Override
@@ -201,9 +264,17 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop>
 
 
         QueryWrapper<Shop> queryWrapper = new QueryWrapper<>();
-
         queryWrapper.eq(id != null, "id", id);
         queryWrapper.eq(managerId != null, "managerId", managerId);
+        queryWrapper.eq(categoryId != null, "categoryId", categoryId);
+        queryWrapper.eq(businessStatus != null, "businessStatus", businessStatus);
+        queryWrapper.eq(auditStatus != null, "auditStatus", auditStatus);
+
+        queryWrapper.like(StringUtils.isNotBlank(name), "name", name);
+        queryWrapper.like(StringUtils.isNotBlank(description), "description", description);
+        queryWrapper.like(StringUtils.isNotBlank(tags), "tags", tags);
+        queryWrapper.like(StringUtils.isNotBlank(address), "address", address);
+        queryWrapper.like(StringUtils.isNotBlank(city), "city", city);
 
         if (StringUtils.isNotBlank(searchText)) {
             queryWrapper.and(wrapper ->
@@ -212,10 +283,18 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop>
                             .like("description", searchText)
                             .or()
                             .like("tags", searchText)
+                            .or()
+                            .like("address", searchText)
+                            .or()
+                            .like("city", searchText)
             );
         }
 
-        queryWrapper.orderBy(SqlUtil.validSortField(sortField), sortOrder.equals(CommonConstant.SORT_ORDER_ASC), sortField);
+        queryWrapper.orderBy(
+                SqlUtil.validSortField(sortField),
+                CommonConstant.SORT_ORDER_ASC.equals(sortOrder),
+                sortField
+        );
         return queryWrapper;
     }
 
