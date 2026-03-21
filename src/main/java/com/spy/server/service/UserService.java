@@ -1,0 +1,41 @@
+package com.spy.server.service;
+
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.spy.server.model.domain.User;
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.spy.server.model.dto.user.UserAddRequest;
+import com.spy.server.model.dto.user.UserQueryRequest;
+import com.spy.server.model.dto.user.UserUpdateRequest;
+import com.spy.server.model.vo.UserVO;
+import jakarta.servlet.http.HttpServletRequest;
+
+import java.util.List;
+
+/**
+* @author OUC
+* @description 针对表【user(用户表)】的数据库操作Service
+* @createDate 2026-03-20 19:51:37
+*/
+public interface UserService extends IService<User> {
+
+    long userRegister(String userAccount, String userPassword);
+
+    User userLogin(String userAccount, String userPassword, HttpServletRequest request);
+
+    UserVO getUserVO(User user);
+
+    int userLogout(HttpServletRequest request);
+
+    User getLoginUser(HttpServletRequest request);
+
+    Long addUser(UserAddRequest userAddRequest);
+
+    Boolean updateUser(UserUpdateRequest userUpdateRequest);
+
+    Wrapper<User> getQueryWrapper(UserQueryRequest userQueryRequest);
+
+    List<UserVO> getUserVO(List<User> records);
+
+    Page<UserVO> listUserVOByPage(UserQueryRequest userQueryRequest);
+}
