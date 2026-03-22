@@ -77,6 +77,14 @@ public class CommentController {
         }
         User loginUser = userService.getLoginUser(request);
 
+        // 判断一下是不是自己的评论
+        Comment comment = commentService.getById(deleteRequest.getId());
+        if(comment == null){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "评论不存在");
+        }
+        if(!comment.getUserId().equals(loginUser.getId())){
+            throw new BusinessException(ErrorCode.NO_AUTH_ERROR, "无权限删除");
+        }
         Boolean result = commentService.revokeComment(deleteRequest, request);
         if (!result) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "删除失败");
@@ -110,13 +118,13 @@ public class CommentController {
      */
     @PostMapping("/delete")
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
-    public BaseResponse<Boolean> deleteComment(@RequestBody DeleteRequest deleteRequest) {
+    public BaseResponse<Boolean> deleteComment(@RequestBody DeleteRequest deleteRequest, HttpServletRequest request) {
         // 1. 校验
         if (deleteRequest == null || deleteRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         // 2. 删除
-        boolean result = commentService.removeById(deleteRequest.getId());
+        boolean result = commentService.revokeComment(deleteRequest, request);
         if (!result) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }

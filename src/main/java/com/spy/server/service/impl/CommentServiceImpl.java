@@ -99,7 +99,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "评论失败");
         }
 
-        calculateScore(shop);
+        calculateNewData(commentAddRequest.getShopId());
 
         return comment.getId();
     }
@@ -138,8 +138,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "更新失败");
         }
 
-        Shop shop = shopService.getById(oldComment.getShopId());
-        calculateScore(shop);
+        calculateNewData(comment.getShopId());
         return true;
     }
 
@@ -240,7 +239,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "评论失败");
         }
 
-        calculateScore(shop);
+        calculateNewData(shopId);
 
         return comment.getId();
     }
@@ -254,24 +253,28 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
         if (comment == null) {
             throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "评论不存在");
         }
-        if (!comment.getUserId().equals(loginUser.getId())) {
-            throw new BusinessException(ErrorCode.NO_AUTH_ERROR, "无权限删除评论");
-        }
+
         // 2. 删除
         boolean result = this.removeById(deleteRequest.getId());
         if (!result) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
 
-        Shop shop = shopService.getById(comment.getShopId());
-        calculateScore(shop);
+        calculateNewData(comment.getShopId());
 
         return result;
     }
 
-    // 计算店铺的分数
-    private void calculateScore(Shop shop) {
-        // 发布评论之后，需要重新计算店铺的评分
+    private void calculateNewData(Long id) {
+        // 重新计算商店的，评论数量
+        if(id == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "计算失败");
+        }
+        Shop shop = shopService.getById(id);
+        if(shop == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "商店不存在");
+        }
+
         // 先得到全部的该店铺的评论信息
         QueryWrapper<Comment> wrapper = new QueryWrapper<>();
         wrapper.eq("shopId", shop.getId());
