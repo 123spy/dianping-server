@@ -39,9 +39,13 @@ public class CommentController {
     @Resource
     private UserService userService;
 
-    @Resource
-    private ShopService shopService;
-
+    /**
+     * 普通用户提交评论
+     *
+     * @param commentSubmitRequest
+     * @param request
+     * @return
+     */
     @PostMapping("/submit")
     public BaseResponse<Long> submitComment(@RequestBody CommentSubmitRequest commentSubmitRequest,
                                             HttpServletRequest request) {
@@ -65,21 +69,35 @@ public class CommentController {
         return ResultUtil.success(id);
     }
 
-    @PostMapping("/delete/my")
-    public BaseResponse<Boolean> deleteMyComment(@RequestBody DeleteRequest deleteRequest, HttpServletRequest request) {
+    /**
+     * 普通用户删除评论
+     *
+     * @param deleteRequest
+     * @param request
+     * @return
+     */
+    @PostMapping("/revoke")
+    public BaseResponse<Boolean> revokeComment(@RequestBody DeleteRequest deleteRequest, HttpServletRequest request) {
         // 1. 校验
         if (deleteRequest == null || deleteRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         User loginUser = userService.getLoginUser(request);
 
-        Boolean result = commentService.deleteMyComment(deleteRequest, request);
-
-
-        return ResultUtil.success(true);
+        Boolean result = commentService.revokeComment(deleteRequest, request);
+        if (!result) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "删除失败");
+        }
+        return ResultUtil.success(result);
     }
 
 
+    /**
+     * 管理员添加评论
+     * @param commentAddRequest
+     * @param request
+     * @return
+     */
     @PostMapping("/add")
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     public BaseResponse<Long> addComment(@RequestBody CommentAddRequest commentAddRequest,
@@ -92,6 +110,11 @@ public class CommentController {
         return ResultUtil.success(id);
     }
 
+    /**
+     * 管理员删除评论
+     * @param deleteRequest
+     * @return
+     */
     @PostMapping("/delete")
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     public BaseResponse<Boolean> deleteComment(@RequestBody DeleteRequest deleteRequest) {
@@ -107,6 +130,12 @@ public class CommentController {
         return ResultUtil.success(true);
     }
 
+    /**
+     * 管理员更新评论
+     * @param commentUpdateRequest
+     * @param request
+     * @return
+     */
     @PostMapping("/update")
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     public BaseResponse<Boolean> updateComment(@RequestBody CommentUpdateRequest commentUpdateRequest, HttpServletRequest request) {
@@ -122,6 +151,12 @@ public class CommentController {
         return ResultUtil.success(result);
     }
 
+    /**
+     * 管理员获取信息评论
+     * @param id
+     * @param request
+     * @return
+     */
     @GetMapping("/get")
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     public BaseResponse<Comment> getCommentById(long id, HttpServletRequest request) {
@@ -135,6 +170,12 @@ public class CommentController {
         return ResultUtil.success(comment);
     }
 
+    /**
+     * 普通用户获取评论信息
+     * @param id
+     * @param request
+     * @return
+     */
     @GetMapping("/get/vo")
     public BaseResponse<CommentVO> getCommentVOById(long id, HttpServletRequest request) {
         if (id <= 0) {
@@ -147,6 +188,12 @@ public class CommentController {
         return ResultUtil.success(commentService.getCommentVO(comment));
     }
 
+    /**
+     * 管理员获取评论页
+     * @param commentQueryRequest
+     * @param request
+     * @return
+     */
     @PostMapping("/list/page")
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     public BaseResponse<Page<Comment>> listCommentByPage(@RequestBody CommentQueryRequest commentQueryRequest, HttpServletRequest request) {
@@ -159,6 +206,12 @@ public class CommentController {
         return ResultUtil.success(commentPage);
     }
 
+    /**
+     * 普通用户获取评论页
+     * @param commentQueryRequest
+     * @param request
+     * @return
+     */
     @PostMapping("/list/page/vo")
     public BaseResponse<Page<CommentVO>> listCommentVOByPage(@RequestBody CommentQueryRequest commentQueryRequest, HttpServletRequest request) {
         if (commentQueryRequest == null) {

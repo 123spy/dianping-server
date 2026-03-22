@@ -257,7 +257,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Boolean deleteMyComment(DeleteRequest deleteRequest, HttpServletRequest request) {
+    public Boolean revokeComment(DeleteRequest deleteRequest, HttpServletRequest request) {
         User loginUser = userService.getLoginUser(request);
 
         Comment comment = this.getById(deleteRequest.getId());

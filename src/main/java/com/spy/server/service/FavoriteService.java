@@ -2,6 +2,7 @@ package com.spy.server.service;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.spy.server.common.DeleteRequest;
 import com.spy.server.model.domain.Favorite;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.spy.server.model.domain.Favorite;
@@ -9,6 +10,7 @@ import com.spy.server.model.dto.favorite.FavoriteAddRequest;
 import com.spy.server.model.dto.favorite.FavoriteQueryRequest;
 import com.spy.server.model.dto.favorite.FavoriteUpdateRequest;
 import com.spy.server.model.vo.FavoriteVO;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.List;
 
@@ -29,4 +31,6 @@ public interface FavoriteService extends IService<Favorite> {
     List<FavoriteVO> getFavoriteVO(List<Favorite> records);
 
     Page<FavoriteVO> listFavoriteVOByPage(FavoriteQueryRequest favoriteQueryRequest);
+
+    Boolean deleteFavorite(DeleteRequest deleteRequest, HttpServletRequest request);
 }

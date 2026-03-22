@@ -5,10 +5,12 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.spy.server.common.DeleteRequest;
 import com.spy.server.common.ErrorCode;
 import com.spy.server.constant.CommonConstant;
 import com.spy.server.exception.BusinessException;
 import com.spy.server.mapper.FavoriteMapper;
+import com.spy.server.model.domain.Comment;
 import com.spy.server.model.domain.Favorite;
 import com.spy.server.model.domain.Shop;
 import com.spy.server.model.domain.User;
@@ -23,9 +25,12 @@ import com.spy.server.service.ShopService;
 import com.spy.server.service.UserService;
 import com.spy.server.utils.SqlUtil;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -57,6 +62,7 @@ public class FavoriteServiceImpl extends ServiceImpl<FavoriteMapper, Favorite> i
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Long addFavorite(FavoriteAddRequest favoriteAddRequest) {
         if (favoriteAddRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -93,10 +99,13 @@ public class FavoriteServiceImpl extends ServiceImpl<FavoriteMapper, Favorite> i
         if (!saved) {
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "收藏失败");
         }
+
+        calculateCount(shopService.getById(shopId));
         return favorite.getId();
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Boolean updateFavorite(FavoriteUpdateRequest favoriteUpdateRequest) {
         if (favoriteUpdateRequest == null || favoriteUpdateRequest.getId() == null || favoriteUpdateRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -136,6 +145,8 @@ public class FavoriteServiceImpl extends ServiceImpl<FavoriteMapper, Favorite> i
         if (!updated) {
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "更新失败");
         }
+
+        calculateCount(shopService.getById(oldFavorite.getShopId()));
         return true;
     }
 
@@ -184,4 +195,37 @@ public class FavoriteServiceImpl extends ServiceImpl<FavoriteMapper, Favorite> i
         favoriteVOPage.setRecords(this.getFavoriteVO(favoritePage.getRecords()));
         return favoriteVOPage;
     }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Boolean deleteFavorite(DeleteRequest deleteRequest, HttpServletRequest request) {
+        Favorite favorite = this.getById(deleteRequest.getId());
+        if (favorite == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "评论不存在");
+        }
+        // 2. 删除
+        boolean result = this.removeById(deleteRequest.getId());
+        if (!result) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        Shop shop = shopService.getById(favorite.getShopId());
+        calculateCount(shop);
+        return result;
+    }
+
+    private void calculateCount(Shop shop) {
+        if (shop == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "店铺不存在");
+        }
+        shop = shopService.getById(shop.getId());
+
+        // 还需要重新计算商店的评论数
+        shop.setFavoriteCount(shop.getFavoriteCount() + 1);
+
+        boolean result = shopService.updateById(shop);
+        if (!result) {
+            throw new BusinessException(ErrorCode.OPERATION_ERROR, "计算失败");
+        }
+    }
+
 }

@@ -34,5 +34,5 @@ public interface CommentService extends IService<Comment> {
 
     Long submitComment(CommentAddRequest commentAddRequest);
 
-    Boolean deleteMyComment(DeleteRequest deleteRequest, HttpServletRequest request);
+    Boolean revokeComment(DeleteRequest deleteRequest, HttpServletRequest request);
 }

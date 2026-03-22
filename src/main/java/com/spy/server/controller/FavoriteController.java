@@ -10,6 +10,8 @@ import com.spy.server.exception.BusinessException;
 import com.spy.server.model.domain.Favorite;
 import com.spy.server.model.domain.User;
 import com.spy.server.model.dto.favorite.FavoriteAddRequest;
+import com.spy.server.model.dto.favorite.FavoriteSubmitRequest;
+import com.spy.server.model.dto.favorite.FavoriteAddRequest;
 import com.spy.server.model.dto.favorite.FavoriteQueryRequest;
 import com.spy.server.model.dto.favorite.FavoriteUpdateRequest;
 import com.spy.server.model.vo.FavoriteVO;
@@ -32,6 +34,53 @@ public class FavoriteController {
     @Resource
     private UserService userService;
 
+    /**
+     * 普通用户提交收藏
+     *
+     * @param favoriteSubmitRequest
+     * @param request
+     * @return
+     */
+    @PostMapping("/submit")
+    public BaseResponse<Long> submitFavorite(@RequestBody FavoriteSubmitRequest favoriteSubmitRequest,
+                                             HttpServletRequest request) {
+        if (favoriteSubmitRequest == null || favoriteSubmitRequest.getShopId() == null || favoriteSubmitRequest.getShopId() <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+
+        User loginUser = userService.getLoginUser(request);
+        FavoriteAddRequest favoriteAddRequest = new FavoriteAddRequest();
+
+        favoriteAddRequest.setUserId(loginUser.getId());
+        favoriteAddRequest.setShopId(favoriteSubmitRequest.getShopId());
+
+        Long id = favoriteService.addFavorite(favoriteAddRequest);
+
+        return ResultUtil.success(id);
+    }
+
+    /**
+     * 普通用户删除收藏
+     *
+     * @param deleteRequest
+     * @param request
+     * @return
+     */
+    @PostMapping("/revoke")
+    public BaseResponse<Boolean> revokeFavorite(@RequestBody DeleteRequest deleteRequest, HttpServletRequest request) {
+        // 1. 校验
+        if (deleteRequest == null || deleteRequest.getId() <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        User loginUser = userService.getLoginUser(request);
+
+        Boolean result = favoriteService.deleteFavorite(deleteRequest, request);
+        if (!result) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "删除失败");
+        }
+        return ResultUtil.success(result);
+    }
+
     @PostMapping("/add")
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     public BaseResponse<Long> addFavorite(@RequestBody FavoriteAddRequest favoriteAddRequest,
@@ -49,16 +98,12 @@ public class FavoriteController {
 
     @PostMapping("/delete")
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
-    public BaseResponse<Boolean> deleteFavorite(@RequestBody DeleteRequest deleteRequest) {
+    public BaseResponse<Boolean> deleteFavorite(@RequestBody DeleteRequest deleteRequest, HttpServletRequest request) {
         // 1. 校验
         if (deleteRequest == null || deleteRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        // 2. 删除
-        boolean result = favoriteService.removeById(deleteRequest.getId());
-        if (!result) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
+        favoriteService.deleteFavorite(deleteRequest, request);
         return ResultUtil.success(true);
     }
 
