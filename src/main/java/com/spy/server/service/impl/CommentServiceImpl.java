@@ -1,6 +1,5 @@
 package com.spy.server.service.impl;
 
-
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -30,9 +29,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -52,14 +49,57 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
         CommentVO commentVO = new CommentVO();
         BeanUtils.copyProperties(comment, commentVO);
 
-        UserVO userVO = userService.getUserVO(userService.getById(comment.getUserId()));
-        commentVO.setUserVO(userVO);
+        User user = userService.getById(comment.getUserId());
+        if (user != null) {
+            UserVO userVO = userService.getUserVO(user);
+            commentVO.setUserVO(userVO);
+        }
         return commentVO;
+    }
+
+    @Override
+    public List<CommentVO> getCommentVO(List<Comment> records) {
+        if (CollectionUtils.isEmpty(records)) {
+            return new ArrayList<>();
+        }
+
+        Set<Long> userIdSet = records.stream()
+                .map(Comment::getUserId)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+
+        Map<Long, UserVO> userVOMap = new HashMap<>();
+        if (!CollectionUtils.isEmpty(userIdSet)) {
+            List<User> userList = userService.listByIds(userIdSet);
+            userVOMap = userList.stream().collect(Collectors.toMap(
+                    User::getId,
+                    user -> userService.getUserVO(user),
+                    (a, b) -> a
+            ));
+        }
+
+        Map<Long, UserVO> finalUserVOMap = userVOMap;
+        return records.stream().map(comment -> {
+            CommentVO commentVO = new CommentVO();
+            BeanUtils.copyProperties(comment, commentVO);
+            commentVO.setUserVO(finalUserVOMap.get(comment.getUserId()));
+            return commentVO;
+        }).collect(Collectors.toList());
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Long addComment(CommentAddRequest commentAddRequest) {
+        return saveComment(commentAddRequest);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Long submitComment(CommentAddRequest commentAddRequest) {
+        return saveComment(commentAddRequest);
+    }
+
+    private Long saveComment(CommentAddRequest commentAddRequest) {
         if (commentAddRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
@@ -99,12 +139,12 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "评论失败");
         }
 
-        calculateNewData(commentAddRequest.getShopId());
-
+        recalculateCommentCount(shopId);
         return comment.getId();
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Boolean updateComment(CommentUpdateRequest commentUpdateRequest) {
         if (commentUpdateRequest == null || commentUpdateRequest.getId() == null || commentUpdateRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -115,30 +155,82 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
             throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "评论不存在");
         }
 
-        Comment comment = new Comment();
-        BeanUtils.copyProperties(commentUpdateRequest, comment); // 关键修复点
-
-
         Long userId = commentUpdateRequest.getUserId();
-        if (userId != null) {
-            if (userService.getById(userId) == null) {
-                throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户不存在");
-            }
+        if (userId != null && userService.getById(userId) == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户不存在");
         }
 
-        Long shopId = commentUpdateRequest.getShopId();
-        if (shopId != null) {
-            if (shopService.getById(shopId) == null) {
-                throw new BusinessException(ErrorCode.PARAMS_ERROR, "店铺不存在");
-            }
+        Long newShopId = commentUpdateRequest.getShopId();
+        if (newShopId != null && shopService.getById(newShopId) == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "店铺不存在");
         }
+
+        if (commentUpdateRequest.getContent() != null && StringUtils.isBlank(commentUpdateRequest.getContent())) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "评论内容不能为空");
+        }
+
+        Comment comment = new Comment();
+        BeanUtils.copyProperties(commentUpdateRequest, comment);
 
         boolean updated = this.updateById(comment);
         if (!updated) {
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "更新失败");
         }
 
-        calculateNewData(comment.getShopId());
+        Long oldShopId = oldComment.getShopId();
+        Long finalNewShopId = newShopId != null ? newShopId : oldShopId;
+
+        recalculateCommentCount(oldShopId);
+        if (!Objects.equals(oldShopId, finalNewShopId)) {
+            recalculateCommentCount(finalNewShopId);
+        }
+
+        return true;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Boolean revokeComment(DeleteRequest deleteRequest, HttpServletRequest request) {
+        if (deleteRequest == null || deleteRequest.getId() == null || deleteRequest.getId() <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+
+        User loginUser = userService.getLoginUser(request);
+        Comment comment = this.getById(deleteRequest.getId());
+        if (comment == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "评论不存在");
+        }
+        if (!Objects.equals(comment.getUserId(), loginUser.getId())) {
+            throw new BusinessException(ErrorCode.NO_AUTH_ERROR, "无权限删除评论");
+        }
+
+        boolean result = this.removeById(deleteRequest.getId());
+        if (!result) {
+            throw new BusinessException(ErrorCode.OPERATION_ERROR, "删除失败");
+        }
+
+        recalculateCommentCount(comment.getShopId());
+        return true;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Boolean adminDeleteComment(Long id) {
+        if (id == null || id <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+
+        Comment comment = this.getById(id);
+        if (comment == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "评论不存在");
+        }
+
+        boolean result = this.removeById(id);
+        if (!result) {
+            throw new BusinessException(ErrorCode.OPERATION_ERROR, "删除失败");
+        }
+
+        recalculateCommentCount(comment.getShopId());
         return true;
     }
 
@@ -178,14 +270,6 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
     }
 
     @Override
-    public List<CommentVO> getCommentVO(List<Comment> records) {
-        if (CollectionUtils.isEmpty(records)) {
-            return new ArrayList<>();
-        }
-        return records.stream().map(this::getCommentVO).collect(Collectors.toList());
-    }
-
-    @Override
     public Page<CommentVO> listCommentVOByPage(CommentQueryRequest commentQueryRequest) {
         int current = commentQueryRequest.getCurrent();
         int pageSize = commentQueryRequest.getPageSize();
@@ -197,95 +281,27 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public Long submitComment(CommentAddRequest commentAddRequest) {
-        // 提交评论
-        if (commentAddRequest == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
-
-        Long userId = commentAddRequest.getUserId();
-        Long shopId = commentAddRequest.getShopId();
-
-        if (userId == null || userId <= 0 || shopId == null || shopId <= 0) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户或店铺参数错误");
-        }
-        if (StringUtils.isBlank(commentAddRequest.getContent())) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "评论内容不能为空");
-        }
-
-        User user = userService.getById(userId);
-        if (user == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户不存在");
+    public void recalculateCommentCount(Long shopId) {
+        if (shopId == null || shopId <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "店铺参数错误");
         }
 
         Shop shop = shopService.getById(shopId);
         if (shop == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "店铺不存在");
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "店铺不存在");
         }
 
-        Comment comment = new Comment();
-        BeanUtils.copyProperties(commentAddRequest, comment);
-
-        if (comment.getLikeCount() == null) {
-            comment.setLikeCount(0);
-        }
-        if (comment.getStatus() == null) {
-            comment.setStatus(0);
-        }
-
-        boolean saved = this.save(comment);
-        if (!saved) {
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "评论失败");
-        }
-
-        calculateNewData(shopId);
-
-        return comment.getId();
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public Boolean revokeComment(DeleteRequest deleteRequest, HttpServletRequest request) {
-        User loginUser = userService.getLoginUser(request);
-
-        Comment comment = this.getById(deleteRequest.getId());
-        if (comment == null) {
-            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "评论不存在");
-        }
-
-        // 2. 删除
-        boolean result = this.removeById(deleteRequest.getId());
-        if (!result) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
-
-        calculateNewData(comment.getShopId());
-
-        return result;
-    }
-
-    private void calculateNewData(Long id) {
-        // 重新计算商店的，评论数量
-        if(id == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "计算失败");
-        }
-        Shop shop = shopService.getById(id);
-        if(shop == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "商店不存在");
-        }
-
-        // 先得到全部的该店铺的评论信息
         QueryWrapper<Comment> wrapper = new QueryWrapper<>();
-        wrapper.eq("shopId", shop.getId());
-        long count = this.count(wrapper);
+        wrapper.eq("shopId", shopId);
+        wrapper.eq("isDelete", 0);
+        wrapper.eq("status", 0);
 
-        // 还需要重新计算商店的评论数
+        long count = this.count(wrapper);
         shop.setCommentCount((int) count);
 
         boolean result = shopService.updateById(shop);
         if (!result) {
-            throw new BusinessException(ErrorCode.OPERATION_ERROR, "重新计算失败");
+            throw new BusinessException(ErrorCode.OPERATION_ERROR, "重算评论数失败");
         }
     }
 }

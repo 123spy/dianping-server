@@ -62,33 +62,22 @@ public class CommentController {
         return ResultUtil.success(id);
     }
 
-    /**
-     * 普通用户删除评论
-     *
-     * @param deleteRequest
-     * @param request
-     * @return
-     */
-    @PostMapping("/revoke")
-    public BaseResponse<Boolean> revokeComment(@RequestBody DeleteRequest deleteRequest, HttpServletRequest request) {
-        // 1. 校验
-        if (deleteRequest == null || deleteRequest.getId() <= 0) {
+    @PostMapping("/delete")
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    public BaseResponse<Boolean> deleteComment(@RequestBody DeleteRequest deleteRequest) {
+        if (deleteRequest == null || deleteRequest.getId() == null || deleteRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        User loginUser = userService.getLoginUser(request);
+        boolean result = commentService.adminDeleteComment(deleteRequest.getId());
+        return ResultUtil.success(result);
+    }
 
-        // 判断一下是不是自己的评论
-        Comment comment = commentService.getById(deleteRequest.getId());
-        if(comment == null){
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "评论不存在");
+    @PostMapping("/revoke")
+    public BaseResponse<Boolean> revokeComment(@RequestBody DeleteRequest deleteRequest, HttpServletRequest request) {
+        if (deleteRequest == null || deleteRequest.getId() == null || deleteRequest.getId() <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        if(!comment.getUserId().equals(loginUser.getId())){
-            throw new BusinessException(ErrorCode.NO_AUTH_ERROR, "无权限删除");
-        }
-        Boolean result = commentService.revokeComment(deleteRequest, request);
-        if (!result) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "删除失败");
-        }
+        boolean result = commentService.revokeComment(deleteRequest, request);
         return ResultUtil.success(result);
     }
 
@@ -111,25 +100,7 @@ public class CommentController {
         return ResultUtil.success(id);
     }
 
-    /**
-     * 管理员删除评论
-     * @param deleteRequest
-     * @return
-     */
-    @PostMapping("/delete")
-    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
-    public BaseResponse<Boolean> deleteComment(@RequestBody DeleteRequest deleteRequest, HttpServletRequest request) {
-        // 1. 校验
-        if (deleteRequest == null || deleteRequest.getId() <= 0) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
-        // 2. 删除
-        boolean result = commentService.revokeComment(deleteRequest, request);
-        if (!result) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
-        return ResultUtil.success(true);
-    }
+
 
     /**
      * 管理员更新评论
