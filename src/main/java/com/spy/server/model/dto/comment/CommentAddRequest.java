@@ -13,6 +13,8 @@ import java.util.Date;
  */
 @Data
 public class CommentAddRequest {
+
+
     /**
      * 用户 id
      */
@@ -27,11 +29,6 @@ public class CommentAddRequest {
      * 评论内容
      */
     private String content;
-
-    /**
-     * 评分，1-5
-     */
-    private Integer score;
 
     /**
      * 点赞数

@@ -11,7 +11,6 @@ import com.spy.server.model.domain.Favorite;
 import com.spy.server.model.domain.User;
 import com.spy.server.model.dto.favorite.FavoriteAddRequest;
 import com.spy.server.model.dto.favorite.FavoriteSubmitRequest;
-import com.spy.server.model.dto.favorite.FavoriteAddRequest;
 import com.spy.server.model.dto.favorite.FavoriteQueryRequest;
 import com.spy.server.model.dto.favorite.FavoriteUpdateRequest;
 import com.spy.server.model.vo.FavoriteVO;

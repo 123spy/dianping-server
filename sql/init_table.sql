@@ -1,6 +1,6 @@
 CREATE DATABASE IF NOT EXISTS dianping_project
-DEFAULT CHARACTER SET utf8mb4
-DEFAULT COLLATE utf8mb4_unicode_ci;
+    DEFAULT CHARACTER SET utf8mb4
+    DEFAULT COLLATE utf8mb4_unicode_ci;
 
 USE dianping_project;
 
@@ -38,7 +38,7 @@ DROP TABLE IF EXISTS category;
 CREATE TABLE category (
                           id BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键 id',
                           name VARCHAR(64) NOT NULL COMMENT '分类名称',
-                          sort INT NOT NULL DEFAULT 0 COMMENT '排序值，越小越靠前',
+                          sort INT NOT NULL DEFAULT 0 COMMENT '排序值，越大越靠前',
                           createTime DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
                           updateTime DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
                           isDelete TINYINT NOT NULL DEFAULT 0 COMMENT '逻辑删除：0-未删 1-已删',
@@ -66,6 +66,7 @@ CREATE TABLE shop (
                       businessStatus TINYINT NOT NULL DEFAULT 1 COMMENT '营业状态：0-歇业 1-营业',
                       auditStatus TINYINT NOT NULL DEFAULT 0 COMMENT '审核状态：0-审核中 1-审核通过 2-审核失败',
                       avgScore DECIMAL(3,2) NOT NULL DEFAULT 0.00 COMMENT '店铺平均分，范围建议 0.00-5.00',
+                      ratingCount INT NOT NULL DEFAULT 0 COMMENT '评分人数',
                       commentCount INT NOT NULL DEFAULT 0 COMMENT '评论数',
                       favoriteCount INT NOT NULL DEFAULT 0 COMMENT '收藏数',
                       viewCount INT NOT NULL DEFAULT 0 COMMENT '浏览量',
@@ -79,6 +80,7 @@ CREATE TABLE shop (
                       KEY idx_businessStatus (businessStatus),
                       KEY idx_auditStatus (auditStatus),
                       KEY idx_avgScore (avgScore),
+                      KEY idx_ratingCount (ratingCount),
                       KEY idx_commentCount (commentCount),
                       KEY idx_favoriteCount (favoriteCount),
                       KEY idx_name (name)
@@ -87,6 +89,7 @@ CREATE TABLE shop (
 
 -- =========================
 -- 4. 评论表
+-- 说明：评论和评分拆开，这里只存评论内容
 -- =========================
 DROP TABLE IF EXISTS comment;
 CREATE TABLE comment (
@@ -94,7 +97,6 @@ CREATE TABLE comment (
                          userId BIGINT NOT NULL COMMENT '用户 id',
                          shopId BIGINT NOT NULL COMMENT '店铺 id',
                          content VARCHAR(2000) NOT NULL COMMENT '评论内容',
-                         score TINYINT NOT NULL COMMENT '评分，1-5',
                          likeCount INT NOT NULL DEFAULT 0 COMMENT '点赞数',
                          status TINYINT NOT NULL DEFAULT 0 COMMENT '评论状态：0-正常 1-隐藏/删除 2-待审核',
                          createTime DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
@@ -103,14 +105,36 @@ CREATE TABLE comment (
                          PRIMARY KEY (id),
                          KEY idx_userId (userId),
                          KEY idx_shopId (shopId),
-                         KEY idx_score (score),
                          KEY idx_status (status),
                          KEY idx_createTime (createTime)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='评论表';
 
 
 -- =========================
--- 5. 收藏表
+-- 5. 店铺评分表
+-- 说明：一个用户对一个店铺只能有一条有效评分
+-- =========================
+DROP TABLE IF EXISTS shop_rating;
+CREATE TABLE shop_rating
+(
+    id         BIGINT   NOT NULL AUTO_INCREMENT COMMENT '主键 id',
+    userId     BIGINT   NOT NULL COMMENT '用户 id',
+    shopId     BIGINT   NOT NULL COMMENT '店铺 id',
+    score      TINYINT  NOT NULL COMMENT '评分，1-5',
+    createTime DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    updateTime DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    isDelete   TINYINT  NOT NULL DEFAULT 0 COMMENT '逻辑删除：0-未删 1-已删',
+    PRIMARY KEY (id),
+    UNIQUE KEY uk_user_shop (userId, shopId),
+    KEY idx_shopId (shopId),
+    KEY idx_score (score),
+    KEY idx_createTime (createTime)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4 COMMENT ='店铺评分表';
+
+
+-- =========================
+-- 6. 收藏表
 -- =========================
 DROP TABLE IF EXISTS favorite;
 CREATE TABLE favorite (
@@ -127,7 +151,7 @@ CREATE TABLE favorite (
 
 
 -- =========================
--- 6. 优惠券表（券模板）
+-- 7. 优惠券表（券模板）
 -- =========================
 DROP TABLE IF EXISTS coupon;
 CREATE TABLE coupon (
@@ -157,7 +181,7 @@ CREATE TABLE coupon (
 
 
 -- =========================
--- 7. 订单表
+-- 8. 订单表
 -- =========================
 DROP TABLE IF EXISTS coupon_order;
 CREATE TABLE coupon_order (
@@ -186,7 +210,7 @@ CREATE TABLE coupon_order (
 
 
 -- =========================
--- 8. 用户拥有的券表
+-- 9. 用户拥有的券表
 -- =========================
 DROP TABLE IF EXISTS user_coupon;
 CREATE TABLE user_coupon (
@@ -211,10 +235,9 @@ CREATE TABLE user_coupon (
                              KEY idx_expireTime (expireTime)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户拥有的优惠券表';
 
+
 -- =========================
--- 1. 初始化用户数据
--- 说明：
--- userPassword 这里先随便写测试值，真实项目要存加密后的密码
+-- 10. 初始化用户数据
 -- =========================
 INSERT INTO user
 (userName, userAccount, userPassword, userPhone, avatar, userProfile, userRole, status)
@@ -227,75 +250,78 @@ VALUES
 
 
 -- =========================
--- 2. 初始化分类数据
--- 注意：你当前注释还是“越小越靠前”
--- 如果你后面改成“越大越靠前”，查询时改 ORDER BY sort DESC 即可
+-- 11. 初始化分类数据
+-- 这里改成越大越靠前
 -- =========================
 INSERT INTO category
 (name, sort)
-VALUES
-    ('火锅', 1),
-    ('烧烤', 2),
-    ('奶茶', 3),
-    ('咖啡', 4),
-    ('快餐', 5),
-    ('甜品', 6);
+VALUES ('火锅', 100),
+       ('烧烤', 90),
+       ('奶茶', 80),
+       ('咖啡', 70),
+       ('快餐', 60),
+       ('甜品', 50);
 
 
 -- =========================
--- 3. 初始化店铺数据
--- managerId:
--- 3 = 王店长
--- 4 = 赵店长
--- categoryId 参考上面的插入顺序
+-- 12. 初始化店铺数据
 -- =========================
 INSERT INTO shop
 (managerId, name, description, tags, categoryId, longitude, latitude, address, city,
- businessStatus, auditStatus, avgScore, commentCount, favoriteCount, viewCount)
+ businessStatus, auditStatus, avgScore, ratingCount, commentCount, favoriteCount, viewCount)
 VALUES
     (3, '蜀香火锅', '主打川味牛油火锅，适合朋友聚餐', '火锅,聚餐,热门', 1,
      116.397128, 39.916527, '北京市朝阳区建国路88号', '北京',
-     1, 1, 4.60, 2, 2, 120),
+     1, 1, 4.50, 2, 2, 2, 120),
 
     (4, '深夜烧烤摊', '营业到凌晨两点的烧烤小店', '烧烤,夜宵,人气', 2,
      116.407128, 39.926527, '北京市海淀区中关村大街100号', '北京',
-     1, 1, 4.20, 1, 1, 80),
+     1, 1, 4.00, 1, 1, 1, 80),
 
     (3, '甜心奶茶', '招牌杨枝甘露和芝士葡萄', '奶茶,饮品,学生党', 3,
      121.473701, 31.230416, '上海市浦东新区世纪大道200号', '上海',
-     1, 1, 4.80, 1, 2, 150),
+     1, 1, 5.00, 1, 1, 2, 150),
 
     (4, '慢时光咖啡馆', '适合学习办公的安静咖啡店', '咖啡,安静,下午茶', 4,
      121.483701, 31.240416, '上海市徐汇区漕溪北路66号', '上海',
-     1, 1, 4.50, 0, 0, 60),
+     1, 1, 0.00, 0, 0, 0, 60),
 
     (3, '老街快餐', '平价便捷，出餐快', '快餐,便宜,午餐', 5,
      113.264385, 23.129112, '广州市天河区体育西路10号', '广州',
-     1, 1, 4.00, 0, 0, 40),
+     1, 1, 0.00, 0, 0, 0, 40),
 
     (4, '樱花甜品屋', '主打蛋糕和双皮奶', '甜品,约会,下午茶', 6,
      113.274385, 23.139112, '广州市越秀区北京路66号', '广州',
-     1, 1, 4.70, 0, 1, 70);
+     1, 1, 0.00, 0, 0, 1, 70);
 
 
 -- =========================
--- 4. 初始化评论数据
--- userId:
--- 1 = 张三
--- 2 = 李四
--- shopId 按上面店铺插入顺序从 1 开始
+-- 13. 初始化评论数据
+-- 评论不再带 score
 -- =========================
 INSERT INTO comment
-(userId, shopId, content, score, likeCount, status)
-VALUES
-    (1, 1, '锅底很香，牛肉很新鲜，环境也不错。', 5, 3, 0),
-    (2, 1, '味道不错，就是排队有点久。', 4, 1, 0),
-    (1, 2, '烤串分量足，适合夜宵。', 4, 2, 0),
-    (2, 3, '奶茶很好喝，性价比高。', 5, 5, 0);
+    (userId, shopId, content, likeCount, status)
+VALUES (1, 1, '锅底很香，牛肉很新鲜，环境也不错。', 3, 0),
+       (2, 1, '味道不错，就是排队有点久。', 1, 0),
+       (1, 2, '烤串分量足，适合夜宵。', 2, 0),
+       (2, 3, '奶茶很好喝，性价比高。', 5, 0),
+       (1, 1, '这次和朋友来吃，服务态度也挺好。', 0, 0);
 
 
 -- =========================
--- 5. 初始化收藏数据
+-- 14. 初始化评分数据
+-- 一个用户对一个店铺只能有一条评分
+-- =========================
+INSERT INTO shop_rating
+    (userId, shopId, score)
+VALUES (1, 1, 5),
+       (2, 1, 4),
+       (1, 2, 4),
+       (2, 3, 5);
+
+
+-- =========================
+-- 15. 初始化收藏数据
 -- =========================
 INSERT INTO favorite
 (userId, shopId)
@@ -309,11 +335,7 @@ VALUES
 
 
 -- =========================
--- 6. 初始化优惠券数据
--- type:
--- 0-普通券 1-团购券 2-秒杀券
--- status:
--- 0-下架 1-上架 2-审核中
+-- 16. 初始化优惠券数据
 -- =========================
 INSERT INTO coupon
 (shopId, title, description, type, price, discountPrice, stock,
@@ -345,9 +367,7 @@ VALUES
 
 
 -- =========================
--- 7. 初始化订单数据
--- status:
--- 0-待支付 1-已支付 2-已取消 3-已完成 4-已退款
+-- 17. 初始化订单数据
 -- =========================
 INSERT INTO coupon_order
 (orderNo, userId, shopId, couponId, totalAmount, payAmount, status, payTime, cancelTime, finishTime)
@@ -359,9 +379,7 @@ VALUES
 
 
 -- =========================
--- 8. 初始化用户拥有的券数据
--- status:
--- 0-未使用 1-已使用 2-已过期 3-已退款
+-- 18. 初始化用户拥有的券数据
 -- =========================
 INSERT INTO user_coupon
 (userId, couponId, orderId, code, status, obtainTime, useTime, expireTime)
@@ -372,12 +390,41 @@ VALUES
 
 
 -- =========================
--- 9. 可选：根据初始化数据修正店铺统计字段
--- 让 shop 表里的 avgScore/commentCount/favoriteCount 更贴近已有数据
+-- 19. 可选：如果你想按真实数据重新刷新店铺统计，也可以执行下面这些
 -- =========================
-UPDATE shop SET avgScore = 4.50, commentCount = 2, favoriteCount = 2 WHERE id = 1;
-UPDATE shop SET avgScore = 4.00, commentCount = 1, favoriteCount = 1 WHERE id = 2;
-UPDATE shop SET avgScore = 5.00, commentCount = 1, favoriteCount = 2 WHERE id = 3;
-UPDATE shop SET avgScore = 0.00, commentCount = 0, favoriteCount = 0 WHERE id = 4;
-UPDATE shop SET avgScore = 0.00, commentCount = 0, favoriteCount = 0 WHERE id = 5;
-UPDATE shop SET avgScore = 0.00, commentCount = 0, favoriteCount = 1 WHERE id = 6;
+UPDATE shop
+SET avgScore      = 4.50,
+    ratingCount   = 2,
+    commentCount  = 3,
+    favoriteCount = 2
+WHERE id = 1;
+UPDATE shop
+SET avgScore      = 4.00,
+    ratingCount   = 1,
+    commentCount  = 1,
+    favoriteCount = 1
+WHERE id = 2;
+UPDATE shop
+SET avgScore      = 5.00,
+    ratingCount   = 1,
+    commentCount  = 1,
+    favoriteCount = 2
+WHERE id = 3;
+UPDATE shop
+SET avgScore      = 0.00,
+    ratingCount   = 0,
+    commentCount  = 0,
+    favoriteCount = 0
+WHERE id = 4;
+UPDATE shop
+SET avgScore      = 0.00,
+    ratingCount   = 0,
+    commentCount  = 0,
+    favoriteCount = 0
+WHERE id = 5;
+UPDATE shop
+SET avgScore      = 0.00,
+    ratingCount   = 0,
+    commentCount  = 0,
+    favoriteCount = 1
+WHERE id = 6;

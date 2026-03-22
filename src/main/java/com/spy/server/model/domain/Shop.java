@@ -82,6 +82,11 @@ public class Shop {
     private BigDecimal avgScore;
 
     /**
+     * 评分人数
+     */
+    private Integer ratingCount;
+
+    /**
      * 评论数
      */
     private Integer commentCount;

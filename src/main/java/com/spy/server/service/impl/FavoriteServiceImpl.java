@@ -9,14 +9,10 @@ import com.spy.server.common.DeleteRequest;
 import com.spy.server.common.ErrorCode;
 import com.spy.server.constant.CommonConstant;
 import com.spy.server.exception.BusinessException;
-import com.spy.server.mapper.FavoriteMapper;
-import com.spy.server.model.domain.Comment;
 import com.spy.server.model.domain.Favorite;
+import com.spy.server.mapper.FavoriteMapper;
 import com.spy.server.model.domain.Shop;
 import com.spy.server.model.domain.User;
-import com.spy.server.model.dto.favorite.FavoriteAddRequest;
-import com.spy.server.model.dto.favorite.FavoriteQueryRequest;
-import com.spy.server.model.dto.favorite.FavoriteUpdateRequest;
 import com.spy.server.model.vo.FavoriteVO;
 import com.spy.server.model.vo.ShopVO;
 import com.spy.server.model.vo.UserVO;
@@ -30,15 +26,19 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * @author OUC
+ * @description 针对表【favorite(收藏表)】的数据库操作Service实现
+ * @createDate 2026-03-22 13:49:40
+ */
 @Service
-public class FavoriteServiceImpl extends ServiceImpl<FavoriteMapper, Favorite> implements FavoriteService {
-
+public class FavoriteServiceImpl extends ServiceImpl<FavoriteMapper, Favorite>
+        implements FavoriteService {
     @Resource
     private UserService userService;
 
@@ -63,7 +63,7 @@ public class FavoriteServiceImpl extends ServiceImpl<FavoriteMapper, Favorite> i
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Long addFavorite(FavoriteAddRequest favoriteAddRequest) {
+    public Long addFavorite(com.spy.server.model.dto.favorite.FavoriteAddRequest favoriteAddRequest) {
         if (favoriteAddRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
@@ -106,7 +106,7 @@ public class FavoriteServiceImpl extends ServiceImpl<FavoriteMapper, Favorite> i
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Boolean updateFavorite(FavoriteUpdateRequest favoriteUpdateRequest) {
+    public Boolean updateFavorite(com.spy.server.model.dto.favorite.FavoriteUpdateRequest favoriteUpdateRequest) {
         if (favoriteUpdateRequest == null || favoriteUpdateRequest.getId() == null || favoriteUpdateRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
@@ -151,7 +151,7 @@ public class FavoriteServiceImpl extends ServiceImpl<FavoriteMapper, Favorite> i
     }
 
     @Override
-    public Wrapper<Favorite> getQueryWrapper(FavoriteQueryRequest favoriteQueryRequest) {
+    public Wrapper<Favorite> getQueryWrapper(com.spy.server.model.dto.favorite.FavoriteQueryRequest favoriteQueryRequest) {
         if (favoriteQueryRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
@@ -186,7 +186,7 @@ public class FavoriteServiceImpl extends ServiceImpl<FavoriteMapper, Favorite> i
     }
 
     @Override
-    public Page<FavoriteVO> listFavoriteVOByPage(FavoriteQueryRequest favoriteQueryRequest) {
+    public Page<FavoriteVO> listFavoriteVOByPage(com.spy.server.model.dto.favorite.FavoriteQueryRequest favoriteQueryRequest) {
         int current = favoriteQueryRequest.getCurrent();
         int pageSize = favoriteQueryRequest.getPageSize();
 
@@ -227,5 +227,8 @@ public class FavoriteServiceImpl extends ServiceImpl<FavoriteMapper, Favorite> i
             throw new BusinessException(ErrorCode.OPERATION_ERROR, "计算失败");
         }
     }
-
 }
+
+
+
+

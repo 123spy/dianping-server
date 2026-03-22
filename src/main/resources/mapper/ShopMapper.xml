@@ -18,6 +18,7 @@
             <result property="businessStatus" column="businessStatus" />
             <result property="auditStatus" column="auditStatus" />
             <result property="avgScore" column="avgScore" />
+            <result property="ratingCount" column="ratingCount" />
             <result property="commentCount" column="commentCount" />
             <result property="favoriteCount" column="favoriteCount" />
             <result property="viewCount" column="viewCount" />
@@ -29,7 +30,7 @@
     <sql id="Base_Column_List">
         id,managerId,name,description,tags,categoryId,
         longitude,latitude,address,city,businessStatus,
-        auditStatus,avgScore,commentCount,favoriteCount,viewCount,
-        createTime,updateTime,isDelete
+        auditStatus,avgScore,ratingCount,commentCount,favoriteCount,
+        viewCount,createTime,updateTime,isDelete
     </sql>
 </mapper>

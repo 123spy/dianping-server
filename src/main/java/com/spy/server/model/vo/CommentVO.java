@@ -23,7 +23,6 @@ public class CommentVO {
      */
     private Long userId;
 
-
     private UserVO userVO;
 
     /**
@@ -31,15 +30,12 @@ public class CommentVO {
      */
     private Long shopId;
 
+    private ShopVO shopVO;
+
     /**
      * 评论内容
      */
     private String content;
-
-    /**
-     * 评分，1-5
-     */
-    private Integer score;
 
     /**
      * 点赞数

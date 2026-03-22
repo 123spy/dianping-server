@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 /**
 * @author OUC
 * @description 针对表【category(店铺分类表)】的数据库操作Mapper
-* @createDate 2026-03-20 19:51:22
+* @createDate 2026-03-22 13:49:31
 * @Entity generator.domain.Category
 */
 public interface CategoryMapper extends BaseMapper<Category> {

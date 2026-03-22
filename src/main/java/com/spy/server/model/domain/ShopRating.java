@@ -1,22 +1,23 @@
-package com.spy.server.model.dto.comment;
+package com.spy.server.model.domain;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.spy.server.common.PageRequest;
+import java.util.Date;
 import lombok.Data;
 
-import java.util.Date;
-
 /**
- * 评论表
- * @TableName comment
+ * 店铺评分表
+ * @TableName shop_rating
  */
+@TableName(value ="shop_rating")
 @Data
-public class CommentQueryRequest extends PageRequest {
+public class ShopRating {
     /**
      * 主键 id
      */
+    @TableId(type = IdType.AUTO)
     private Long id;
 
     /**
@@ -30,19 +31,9 @@ public class CommentQueryRequest extends PageRequest {
     private Long shopId;
 
     /**
-     * 评论内容
+     * 评分，1-5
      */
-    private String content;
-
-    /**
-     * 点赞数
-     */
-    private Integer likeCount;
-
-    /**
-     * 评论状态：0-正常 1-隐藏/删除 2-待审核
-     */
-    private Integer status;
+    private Integer score;
 
     /**
      * 创建时间
@@ -53,4 +44,9 @@ public class CommentQueryRequest extends PageRequest {
      * 更新时间
      */
     private Date updateTime;
+
+    /**
+     * 逻辑删除：0-未删 1-已删
+     */
+    private Integer isDelete;
 }

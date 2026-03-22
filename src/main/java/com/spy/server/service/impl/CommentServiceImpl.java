@@ -1,8 +1,8 @@
 package com.spy.server.service.impl;
 
+
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.spy.server.common.DeleteRequest;
@@ -28,8 +28,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -66,16 +66,12 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 
         Long userId = commentAddRequest.getUserId();
         Long shopId = commentAddRequest.getShopId();
-        Integer score = commentAddRequest.getScore();
 
         if (userId == null || userId <= 0 || shopId == null || shopId <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户或店铺参数错误");
         }
         if (StringUtils.isBlank(commentAddRequest.getContent())) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "评论内容不能为空");
-        }
-        if (score == null || score < 1 || score > 5) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "评分必须在 1 到 5 之间");
         }
 
         User user = userService.getById(userId);
@@ -157,7 +153,6 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
         Long userId = commentQueryRequest.getUserId();
         Long shopId = commentQueryRequest.getShopId();
         String content = commentQueryRequest.getContent();
-        Integer score = commentQueryRequest.getScore();
         Integer likeCount = commentQueryRequest.getLikeCount();
         Integer status = commentQueryRequest.getStatus();
         Date createTime = commentQueryRequest.getCreateTime();
@@ -170,7 +165,6 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
         queryWrapper.eq(id != null, "id", id);
         queryWrapper.eq(userId != null, "userId", userId);
         queryWrapper.eq(shopId != null, "shopId", shopId);
-        queryWrapper.eq(score != null, "score", score);
         queryWrapper.eq(likeCount != null, "likeCount", likeCount);
         queryWrapper.eq(status != null, "status", status);
         queryWrapper.like(StringUtils.isNotBlank(content), "content", content);
@@ -213,16 +207,12 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 
         Long userId = commentAddRequest.getUserId();
         Long shopId = commentAddRequest.getShopId();
-        Integer score = commentAddRequest.getScore();
 
         if (userId == null || userId <= 0 || shopId == null || shopId <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户或店铺参数错误");
         }
         if (StringUtils.isBlank(commentAddRequest.getContent())) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "评论内容不能为空");
-        }
-        if (score == null || score < 1 || score > 5) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "评分必须在 1 到 5 之间");
         }
 
         User user = userService.getById(userId);
@@ -285,21 +275,10 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
         // 先得到全部的该店铺的评论信息
         QueryWrapper<Comment> wrapper = new QueryWrapper<>();
         wrapper.eq("shopId", shop.getId());
-        List<Comment> commentList = this.list(wrapper);
-
-        // 有可能出现，现在的评分为0的情况
-        if (commentList.size() == 0) {
-            shop.setAvgScore(new BigDecimal("0"));
-        } else {
-            double sumScore = 0;
-            for (Comment item : commentList) {
-                sumScore += item.getScore();
-            }
-            shop.setAvgScore(new BigDecimal(sumScore / commentList.size()));
-        }
+        long count = this.count(wrapper);
 
         // 还需要重新计算商店的评论数
-        shop.setCommentCount(commentList.size());
+        shop.setCommentCount((int) count);
 
         boolean result = shopService.updateById(shop);
         if (!result) {

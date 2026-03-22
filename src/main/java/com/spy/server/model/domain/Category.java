@@ -26,7 +26,7 @@ public class Category {
     private String name;
 
     /**
-     * 排序值，越小越靠前
+     * 排序值，越大越靠前
      */
     private Integer sort;
 

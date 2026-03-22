@@ -8,7 +8,6 @@ import com.spy.server.model.dto.user.UserAddRequest;
 import com.spy.server.model.dto.user.UserQueryRequest;
 import com.spy.server.model.dto.user.UserUpdateMyInfoRequest;
 import com.spy.server.model.dto.user.UserUpdateRequest;
-import com.spy.server.model.vo.UserVO;
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.List;
@@ -16,7 +15,7 @@ import java.util.List;
 /**
 * @author OUC
 * @description 针对表【user(用户表)】的数据库操作Service
-* @createDate 2026-03-20 19:51:37
+ * @createDate 2026-03-22 13:49:47
 */
 public interface UserService extends IService<User> {
 
@@ -24,7 +23,7 @@ public interface UserService extends IService<User> {
 
     User userLogin(String userAccount, String userPassword, HttpServletRequest request);
 
-    UserVO getUserVO(User user);
+    com.spy.server.model.vo.UserVO getUserVO(User user);
 
     int userLogout(HttpServletRequest request);
 
@@ -36,9 +35,10 @@ public interface UserService extends IService<User> {
 
     Wrapper<User> getQueryWrapper(UserQueryRequest userQueryRequest);
 
-    List<UserVO> getUserVO(List<User> records);
+    List<com.spy.server.model.vo.UserVO> getUserVO(List<User> records);
 
-    Page<UserVO> listUserVOByPage(UserQueryRequest userQueryRequest);
+    Page<com.spy.server.model.vo.UserVO> listUserVOByPage(UserQueryRequest userQueryRequest);
 
     Boolean updateUserMyInfo(UserUpdateMyInfoRequest userUpdateMyInfoRequest);
+
 }

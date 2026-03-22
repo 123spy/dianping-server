@@ -34,11 +34,6 @@ public class CommentUpdateRequest {
     private String content;
 
     /**
-     * 评分，1-5
-     */
-    private Integer score;
-
-    /**
      * 点赞数
      */
     private Integer likeCount;

@@ -5,27 +5,25 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.spy.server.constant.UserConstant;
-import com.spy.server.model.dto.user.UserUpdateMyInfoRequest;
-import com.spy.server.utils.AccountUtil;
 import com.spy.server.common.ErrorCode;
-import com.spy.server.utils.SqlUtil;
 import com.spy.server.constant.CommonConstant;
+import com.spy.server.constant.UserConstant;
 import com.spy.server.exception.BusinessException;
 import com.spy.server.model.domain.User;
 import com.spy.server.model.dto.user.UserAddRequest;
 import com.spy.server.model.dto.user.UserQueryRequest;
+import com.spy.server.model.dto.user.UserUpdateMyInfoRequest;
 import com.spy.server.model.dto.user.UserUpdateRequest;
-import com.spy.server.model.vo.UserVO;
-import com.spy.server.service.UserService;
 import com.spy.server.mapper.UserMapper;
+import com.spy.server.service.UserService;
+import com.spy.server.utils.AccountUtil;
+import com.spy.server.utils.SqlUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,11 +33,12 @@ import static com.spy.server.constant.UserConstant.USER_LOGIN_STATE;
 /**
 * @author OUC
 * @description 针对表【user(用户表)】的数据库操作Service实现
-* @createDate 2026-03-20 19:51:37
+ * @createDate 2026-03-22 13:49:47
 */
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User>
-    implements UserService{
+        implements UserService {
+
 
     @Override
     public long userRegister(String userAccount, String userPassword) {
@@ -116,11 +115,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     }
 
     @Override
-    public UserVO getUserVO(User user) {
+    public com.spy.server.model.vo.UserVO getUserVO(User user) {
         if (user == null) {
             return null;
         }
-        UserVO userVO = new UserVO();
+        com.spy.server.model.vo.UserVO userVO = new com.spy.server.model.vo.UserVO();
         BeanUtils.copyProperties(user, userVO);
         return userVO;
     }
@@ -329,23 +328,23 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     }
 
     @Override
-    public List<UserVO> getUserVO(List<User> records) {
+    public List<com.spy.server.model.vo.UserVO> getUserVO(List<User> records) {
         if (CollectionUtils.isEmpty(records)) {
             return new ArrayList<>();
         }
-        List<UserVO> userVOList = records.stream().map(user -> {
+        List<com.spy.server.model.vo.UserVO> userVOList = records.stream().map(user -> {
             return getUserVO(user);
         }).collect(Collectors.toList());
         return userVOList;
     }
 
     @Override
-    public Page<UserVO> listUserVOByPage(UserQueryRequest userQueryRequest) {
+    public Page<com.spy.server.model.vo.UserVO> listUserVOByPage(UserQueryRequest userQueryRequest) {
         int current = userQueryRequest.getCurrent();
         int pageSize = userQueryRequest.getPageSize();
         Page<User> userPage = this.page(new Page<>(current, pageSize), this.getQueryWrapper(userQueryRequest));
-        Page<UserVO> userVOPage = new Page<>(current, pageSize, userPage.getTotal());
-        List<UserVO> userVoList = this.getUserVO(userPage.getRecords());
+        Page<com.spy.server.model.vo.UserVO> userVOPage = new Page<>(current, pageSize, userPage.getTotal());
+        List<com.spy.server.model.vo.UserVO> userVoList = this.getUserVO(userPage.getRecords());
         userVOPage.setRecords(userVoList);
         return userVOPage;
     }

@@ -5,28 +5,17 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.google.gson.Gson;
 import com.spy.server.common.ErrorCode;
 import com.spy.server.constant.CommonConstant;
 import com.spy.server.exception.BusinessException;
 import com.spy.server.model.domain.Category;
-import com.spy.server.model.domain.Category;
-import com.spy.server.model.domain.User;
-import com.spy.server.model.dto.category.CategoryAddRequest;
-import com.spy.server.model.dto.category.CategoryQueryRequest;
-import com.spy.server.model.dto.category.CategoryUpdateRequest;
-import com.spy.server.model.vo.CategoryVO;
-import com.spy.server.model.vo.UserVO;
-import com.spy.server.service.CategoryService;
 import com.spy.server.mapper.CategoryMapper;
-import com.spy.server.service.UserService;
+import com.spy.server.service.CategoryService;
 import com.spy.server.utils.SqlUtil;
-import jakarta.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -34,16 +23,15 @@ import java.util.stream.Collectors;
 
 /**
 * @author OUC
- * @description 针对表【category(分类分类表)】的数据库操作Service实现
-* @createDate 2026-03-20 19:51:22
+ * @description 针对表【category(店铺分类表)】的数据库操作Service实现
+ * @createDate 2026-03-22 13:49:31
 */
 @Service
 public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category>
-    implements CategoryService{
-
+        implements CategoryService {
     @Override
-    public CategoryVO getCategoryVO(Category category) {
-        CategoryVO categoryVO = new CategoryVO();
+    public com.spy.server.model.vo.CategoryVO getCategoryVO(Category category) {
+        com.spy.server.model.vo.CategoryVO categoryVO = new com.spy.server.model.vo.CategoryVO();
         if (category == null) {
             return categoryVO;
         }
@@ -53,7 +41,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category>
     }
 
     @Override
-    public Long addCategory(CategoryAddRequest categoryAddRequest) {
+    public Long addCategory(com.spy.server.model.dto.category.CategoryAddRequest categoryAddRequest) {
         if (categoryAddRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
@@ -79,7 +67,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category>
     }
 
     @Override
-    public Boolean updateCategory(CategoryUpdateRequest req) {
+    public Boolean updateCategory(com.spy.server.model.dto.category.CategoryUpdateRequest req) {
         if (req == null || req.getId() == null || req.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
@@ -110,7 +98,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category>
     }
 
     @Override
-    public Wrapper<Category> getQueryWrapper(CategoryQueryRequest categoryQueryRequest) {
+    public Wrapper<Category> getQueryWrapper(com.spy.server.model.dto.category.CategoryQueryRequest categoryQueryRequest) {
         if (categoryQueryRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
@@ -143,27 +131,26 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category>
     }
 
     @Override
-    public List<CategoryVO> getCategoryVO(List<Category> records) {
+    public List<com.spy.server.model.vo.CategoryVO> getCategoryVO(List<Category> records) {
         if (CollectionUtils.isEmpty(records)) {
             return new ArrayList<>();
         }
-        List<CategoryVO> categoryVOList = records.stream().map(category -> {
+        List<com.spy.server.model.vo.CategoryVO> categoryVOList = records.stream().map(category -> {
             return getCategoryVO(category);
         }).collect(Collectors.toList());
         return categoryVOList;
     }
 
     @Override
-    public Page<CategoryVO> listCategoryVOByPage(CategoryQueryRequest categoryQueryRequest) {
+    public Page<com.spy.server.model.vo.CategoryVO> listCategoryVOByPage(com.spy.server.model.dto.category.CategoryQueryRequest categoryQueryRequest) {
         int current = categoryQueryRequest.getCurrent();
         int pageSize = categoryQueryRequest.getPageSize();
         Page<Category> categoryPage = this.page(new Page<>(current, pageSize), this.getQueryWrapper(categoryQueryRequest));
-        Page<CategoryVO> categoryVOPage = new Page<>(current, pageSize, categoryPage.getTotal());
-        List<CategoryVO> categoryVoList = this.getCategoryVO(categoryPage.getRecords());
+        Page<com.spy.server.model.vo.CategoryVO> categoryVOPage = new Page<>(current, pageSize, categoryPage.getTotal());
+        List<com.spy.server.model.vo.CategoryVO> categoryVoList = this.getCategoryVO(categoryPage.getRecords());
         categoryVOPage.setRecords(categoryVoList);
         return categoryVOPage;
     }
-
 }
 
 

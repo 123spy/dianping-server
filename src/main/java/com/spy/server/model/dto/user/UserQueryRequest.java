@@ -1,8 +1,5 @@
 package com.spy.server.model.dto.user;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import com.spy.server.common.PageRequest;
 import lombok.Data;
 

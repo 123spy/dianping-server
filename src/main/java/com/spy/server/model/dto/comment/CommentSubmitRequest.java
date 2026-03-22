@@ -9,7 +9,6 @@ import java.util.Date;
 
 /**
  * 评论表
- *
  * @TableName comment
  */
 @Data
@@ -23,9 +22,4 @@ public class CommentSubmitRequest {
      * 评论内容
      */
     private String content;
-
-    /**
-     * 评分，1-5
-     */
-    private Integer score;
 }

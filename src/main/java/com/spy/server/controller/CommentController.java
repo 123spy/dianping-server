@@ -1,6 +1,5 @@
 package com.spy.server.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.spy.server.annotation.AuthCheck;
 import com.spy.server.common.BaseResponse;
@@ -9,7 +8,6 @@ import com.spy.server.common.ErrorCode;
 import com.spy.server.constant.UserConstant;
 import com.spy.server.exception.BusinessException;
 import com.spy.server.model.domain.Comment;
-import com.spy.server.model.domain.Shop;
 import com.spy.server.model.domain.User;
 import com.spy.server.model.dto.comment.CommentAddRequest;
 import com.spy.server.model.dto.comment.CommentQueryRequest;
@@ -17,16 +15,12 @@ import com.spy.server.model.dto.comment.CommentSubmitRequest;
 import com.spy.server.model.dto.comment.CommentUpdateRequest;
 import com.spy.server.model.vo.CommentVO;
 import com.spy.server.service.CommentService;
-import com.spy.server.service.ShopService;
 import com.spy.server.service.UserService;
 import com.spy.server.utils.ResultUtil;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-
-import java.math.BigDecimal;
-import java.util.List;
 
 @RestController
 @RequestMapping("/comment")
@@ -59,7 +53,6 @@ public class CommentController {
         commentAddRequest.setUserId(loginUser.getId());
         commentAddRequest.setShopId(commentSubmitRequest.getShopId());
         commentAddRequest.setContent(commentSubmitRequest.getContent());
-        commentAddRequest.setScore(commentSubmitRequest.getScore());
         commentAddRequest.setLikeCount(0);
         // todo 这里应该设置为审核状态，但是为了前期方便调试，就直接设置为0
         commentAddRequest.setStatus(0);

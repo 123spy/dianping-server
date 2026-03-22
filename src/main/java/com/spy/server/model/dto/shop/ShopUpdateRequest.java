@@ -1,12 +1,8 @@
 package com.spy.server.model.dto.shop;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -74,6 +70,11 @@ public class ShopUpdateRequest {
      * 审核状态：0-审核中 1-审核通过 2-审核失败
      */
     private Integer auditStatus;
+
+    /**
+     * 评分人数
+     */
+    private Integer ratingCount;
 
     /**
      * 店铺平均分，范围建议 0.00-5.00

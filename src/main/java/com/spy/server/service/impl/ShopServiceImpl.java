@@ -17,9 +17,9 @@ import com.spy.server.model.dto.shop.ShopQueryRequest;
 import com.spy.server.model.dto.shop.ShopUpdateRequest;
 import com.spy.server.model.vo.ShopVO;
 import com.spy.server.model.vo.UserVO;
+import com.spy.server.mapper.ShopMapper;
 import com.spy.server.service.CategoryService;
 import com.spy.server.service.ShopService;
-import com.spy.server.mapper.ShopMapper;
 import com.spy.server.service.UserService;
 import com.spy.server.utils.SqlUtil;
 import jakarta.annotation.Resource;
@@ -36,11 +36,11 @@ import java.util.stream.Collectors;
 /**
 * @author OUC
 * @description 针对表【shop(店铺表)】的数据库操作Service实现
-* @createDate 2026-03-20 19:51:35
+ * @createDate 2026-03-22 13:49:43
 */
 @Service
 public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop>
-    implements ShopService{
+        implements ShopService {
 
     private final Gson gson = new Gson();
 
@@ -74,7 +74,6 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop>
             }
         }
 
-
         return shopVO;
     }
 
@@ -96,9 +95,11 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop>
         Integer businessStatus = shopAddRequest.getBusinessStatus();
         Integer auditStatus = shopAddRequest.getAuditStatus();
         BigDecimal avgScore = shopAddRequest.getAvgScore();
+        Integer ratingCount = shopAddRequest.getRatingCount();
         Integer commentCount = shopAddRequest.getCommentCount();
         Integer favoriteCount = shopAddRequest.getFavoriteCount();
         Integer viewCount = shopAddRequest.getViewCount();
+
 
         if (managerId == null || managerId <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "店长参数错误");
@@ -139,6 +140,7 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop>
         shop.setBusinessStatus(businessStatus);
         shop.setAuditStatus(auditStatus);
         shop.setAvgScore(avgScore);
+        shop.setRatingCount(ratingCount);
         shop.setCommentCount(commentCount);
         shop.setFavoriteCount(favoriteCount);
         shop.setViewCount(viewCount);
@@ -214,6 +216,9 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop>
         if (req.getAvgScore() != null) {
             updateShop.setAvgScore(req.getAvgScore());
         }
+        if (req.getRatingCount() != null) {
+            updateShop.setRatingCount(req.getRatingCount());
+        }
         if (req.getCommentCount() != null) {
             updateShop.setCommentCount(req.getCommentCount());
         }
@@ -246,6 +251,7 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop>
         Integer businessStatus = shopQueryRequest.getBusinessStatus();
         Integer auditStatus = shopQueryRequest.getAuditStatus();
         BigDecimal avgScore = shopQueryRequest.getAvgScore();
+        Integer ratingCount = shopQueryRequest.getRatingCount();
         Integer commentCount = shopQueryRequest.getCommentCount();
         Integer favoriteCount = shopQueryRequest.getFavoriteCount();
         Integer viewCount = shopQueryRequest.getViewCount();
