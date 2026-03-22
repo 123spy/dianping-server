@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.spy.server.constant.UserConstant;
+import com.spy.server.model.dto.user.UserUpdateMyInfoRequest;
 import com.spy.server.utils.AccountUtil;
 import com.spy.server.common.ErrorCode;
 import com.spy.server.utils.SqlUtil;
@@ -264,6 +265,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             updateUser.setStatus(status);
         }
 
+        // 密码
+        if (StringUtils.isNotBlank(req.getUserPassword())) {
+            String userPassword = req.getUserPassword().trim();
+            if (!AccountUtil.checkUserPassword(userPassword)) {
+                throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户密码非法");
+            }
+            // todo 后续需要加密一下
+            // String encryptPassword = AccountUtil.getEncryptPassword(userPassword);
+            updateUser.setUserPassword(userPassword);
+        }
+
         boolean result = this.updateById(updateUser);
         if (!result) {
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "更新失败");
@@ -336,6 +348,57 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         List<UserVO> userVoList = this.getUserVO(userPage.getRecords());
         userVOPage.setRecords(userVoList);
         return userVOPage;
+    }
+
+    @Override
+    public Boolean updateUserMyInfo(UserUpdateMyInfoRequest req) {
+        if (req == null || req.getId() == null || req.getId() <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+
+        Long userId = req.getId();
+        User oldUser = this.getById(userId);
+        if (oldUser == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "用户不存在");
+        }
+
+        User updateUser = new User();
+        updateUser.setId(userId);
+
+        // 用户名
+        if (StringUtils.isNotBlank(req.getUserName())) {
+            String userName = req.getUserName().trim();
+            if (userName.length() > 20) {
+                throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户名过长");
+            }
+            updateUser.setUserName(userName);
+        }
+
+        // 手机号
+        if (StringUtils.isNotBlank(req.getUserPhone())) {
+            String userPhone = req.getUserPhone().trim();
+            updateUser.setUserPhone(userPhone);
+        }
+
+        // 头像
+        if (StringUtils.isNotBlank(req.getAvatar())) {
+            updateUser.setAvatar(req.getAvatar().trim());
+        }
+
+        // 简介
+        if (StringUtils.isNotBlank(req.getUserProfile())) {
+            String userProfile = req.getUserProfile().trim();
+            if (userProfile.length() > 500) {
+                throw new BusinessException(ErrorCode.PARAMS_ERROR, "简介过长");
+            }
+            updateUser.setUserProfile(userProfile);
+        }
+
+        boolean result = this.updateById(updateUser);
+        if (!result) {
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "更新失败");
+        }
+        return true;
     }
 
     public User getSafetyUser(User originUser) {

@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.spy.server.common.DeleteRequest;
 import com.spy.server.common.ErrorCode;
 import com.spy.server.constant.CommonConstant;
 import com.spy.server.exception.BusinessException;
@@ -22,10 +23,13 @@ import com.spy.server.service.ShopService;
 import com.spy.server.service.UserService;
 import com.spy.server.utils.SqlUtil;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -54,6 +58,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Long addComment(CommentAddRequest commentAddRequest) {
         if (commentAddRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -97,6 +102,9 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
         if (!saved) {
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "评论失败");
         }
+
+        calculateScore(shop);
+
         return comment.getId();
     }
 
@@ -111,34 +119,31 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
             throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "评论不存在");
         }
 
-        Long userId = commentUpdateRequest.getUserId();
-        Long shopId = commentUpdateRequest.getShopId();
-        Integer score = commentUpdateRequest.getScore();
-
-        if (userId == null || userId <= 0 || shopId == null || shopId <= 0) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户或店铺参数错误");
-        }
-        if (StringUtils.isBlank(commentUpdateRequest.getContent())) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "评论内容不能为空");
-        }
-        if (score == null || score < 1 || score > 5) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "评分必须在 1 到 5 之间");
-        }
-
-        if (userService.getById(userId) == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户不存在");
-        }
-        if (shopService.getById(shopId) == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "店铺不存在");
-        }
-
         Comment comment = new Comment();
         BeanUtils.copyProperties(commentUpdateRequest, comment); // 关键修复点
+
+
+        Long userId = commentUpdateRequest.getUserId();
+        if (userId != null) {
+            if (userService.getById(userId) == null) {
+                throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户不存在");
+            }
+        }
+
+        Long shopId = commentUpdateRequest.getShopId();
+        if (shopId != null) {
+            if (shopService.getById(shopId) == null) {
+                throw new BusinessException(ErrorCode.PARAMS_ERROR, "店铺不存在");
+            }
+        }
 
         boolean updated = this.updateById(comment);
         if (!updated) {
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "更新失败");
         }
+
+        Shop shop = shopService.getById(oldComment.getShopId());
+        calculateScore(shop);
         return true;
     }
 
@@ -196,5 +201,109 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
         Page<CommentVO> commentVOPage = new Page<>(current, pageSize, commentPage.getTotal());
         commentVOPage.setRecords(this.getCommentVO(commentPage.getRecords()));
         return commentVOPage;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Long submitComment(CommentAddRequest commentAddRequest) {
+        // 提交评论
+        if (commentAddRequest == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+
+        Long userId = commentAddRequest.getUserId();
+        Long shopId = commentAddRequest.getShopId();
+        Integer score = commentAddRequest.getScore();
+
+        if (userId == null || userId <= 0 || shopId == null || shopId <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户或店铺参数错误");
+        }
+        if (StringUtils.isBlank(commentAddRequest.getContent())) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "评论内容不能为空");
+        }
+        if (score == null || score < 1 || score > 5) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "评分必须在 1 到 5 之间");
+        }
+
+        User user = userService.getById(userId);
+        if (user == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户不存在");
+        }
+
+        Shop shop = shopService.getById(shopId);
+        if (shop == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "店铺不存在");
+        }
+
+        Comment comment = new Comment();
+        BeanUtils.copyProperties(commentAddRequest, comment);
+
+        if (comment.getLikeCount() == null) {
+            comment.setLikeCount(0);
+        }
+        if (comment.getStatus() == null) {
+            comment.setStatus(0);
+        }
+
+        boolean saved = this.save(comment);
+        if (!saved) {
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "评论失败");
+        }
+
+        calculateScore(shop);
+
+        return comment.getId();
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Boolean deleteMyComment(DeleteRequest deleteRequest, HttpServletRequest request) {
+        User loginUser = userService.getLoginUser(request);
+
+        Comment comment = this.getById(deleteRequest.getId());
+        if (comment == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "评论不存在");
+        }
+        if (!comment.getUserId().equals(loginUser.getId())) {
+            throw new BusinessException(ErrorCode.NO_AUTH_ERROR, "无权限删除评论");
+        }
+        // 2. 删除
+        boolean result = this.removeById(deleteRequest.getId());
+        if (!result) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+
+        Shop shop = shopService.getById(comment.getShopId());
+        calculateScore(shop);
+
+        return result;
+    }
+
+    // 计算店铺的分数
+    private void calculateScore(Shop shop) {
+        // 发布评论之后，需要重新计算店铺的评分
+        // 先得到全部的该店铺的评论信息
+        QueryWrapper<Comment> wrapper = new QueryWrapper<>();
+        wrapper.eq("shopId", shop.getId());
+        List<Comment> commentList = this.list(wrapper);
+
+        // 有可能出现，现在的评分为0的情况
+        if (commentList.size() == 0) {
+            shop.setAvgScore(new BigDecimal("0"));
+        } else {
+            double sumScore = 0;
+            for (Comment item : commentList) {
+                sumScore += item.getScore();
+            }
+            shop.setAvgScore(new BigDecimal(sumScore / commentList.size()));
+        }
+
+        // 还需要重新计算商店的评论数
+        shop.setCommentCount(commentList.size());
+
+        boolean result = shopService.updateById(shop);
+        if (!result) {
+            throw new BusinessException(ErrorCode.OPERATION_ERROR, "重新计算失败");
+        }
     }
 }

@@ -2,6 +2,7 @@ package com.spy.server.service;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.spy.server.common.DeleteRequest;
 import com.spy.server.model.domain.Comment;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.spy.server.model.domain.Comment;
@@ -9,6 +10,7 @@ import com.spy.server.model.dto.comment.CommentAddRequest;
 import com.spy.server.model.dto.comment.CommentQueryRequest;
 import com.spy.server.model.dto.comment.CommentUpdateRequest;
 import com.spy.server.model.vo.CommentVO;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.List;
 
@@ -29,4 +31,8 @@ public interface CommentService extends IService<Comment> {
     List<CommentVO> getCommentVO(List<Comment> records);
 
     Page<CommentVO> listCommentVOByPage(CommentQueryRequest commentQueryRequest);
+
+    Long submitComment(CommentAddRequest commentAddRequest);
+
+    Boolean deleteMyComment(DeleteRequest deleteRequest, HttpServletRequest request);
 }

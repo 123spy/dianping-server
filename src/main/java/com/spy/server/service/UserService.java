@@ -6,6 +6,7 @@ import com.spy.server.model.domain.User;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.spy.server.model.dto.user.UserAddRequest;
 import com.spy.server.model.dto.user.UserQueryRequest;
+import com.spy.server.model.dto.user.UserUpdateMyInfoRequest;
 import com.spy.server.model.dto.user.UserUpdateRequest;
 import com.spy.server.model.vo.UserVO;
 import jakarta.servlet.http.HttpServletRequest;
@@ -38,4 +39,6 @@ public interface UserService extends IService<User> {
     List<UserVO> getUserVO(List<User> records);
 
     Page<UserVO> listUserVOByPage(UserQueryRequest userQueryRequest);
+
+    Boolean updateUserMyInfo(UserUpdateMyInfoRequest userUpdateMyInfoRequest);
 }

@@ -161,4 +161,19 @@ public class UserController {
         Page<UserVO> userVOPage = userService.listUserVOByPage(userQueryRequest);
         return ResultUtil.success(userVOPage);
     }
+
+    // 用户修改自己的信息
+    @PostMapping("/edit")
+    public BaseResponse<Boolean> editUserInfo(@RequestBody UserUpdateMyInfoRequest userUpdateMyInfoRequest, HttpServletRequest request) {
+        if (userUpdateMyInfoRequest == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        User loginUser = userService.getLoginUser(request);
+        userUpdateMyInfoRequest.setId(loginUser.getId());
+        Boolean result = userService.updateUserMyInfo(userUpdateMyInfoRequest);
+        return ResultUtil.success(result);
+    }
+
+    // todo 忘记密码，重置密码
+
 }
