@@ -102,6 +102,8 @@ public class ShopController {
         return ResultUtil.success(shopPage);
     }
 
+
+
     @PostMapping("/list/page/vo")
     public BaseResponse<Page<ShopVO>> listShopVOByPage(@RequestBody ShopQueryRequest shopQueryRequest, HttpServletRequest request) {
         if (shopQueryRequest == null) {
