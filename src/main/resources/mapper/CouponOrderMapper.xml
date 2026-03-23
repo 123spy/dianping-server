@@ -12,6 +12,7 @@
             <result property="couponId" column="couponId" />
             <result property="totalAmount" column="totalAmount" />
             <result property="payAmount" column="payAmount" />
+        <result property="payType" column="payType" />
             <result property="status" column="status" />
             <result property="payTime" column="payTime" />
             <result property="cancelTime" column="cancelTime" />
@@ -23,7 +24,7 @@
 
     <sql id="Base_Column_List">
         id,orderNo,userId,shopId,couponId,totalAmount,
-        payAmount,status,payTime,cancelTime,finishTime,
+        payAmount,payType,status,payTime,cancelTime,finishTime,
         createTime,updateTime,isDelete
     </sql>
 </mapper>

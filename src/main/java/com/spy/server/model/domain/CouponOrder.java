@@ -62,6 +62,11 @@ public class CouponOrder {
     private Date payTime;
 
     /**
+     * 支付方式
+     */
+    private String payType;
+
+    /**
      * 取消时间
      */
     private Date cancelTime;
