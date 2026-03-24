@@ -18,4 +18,6 @@ public class CouponOrderCancelRequest {
      * 主键 id
      */
     private Long id;
+
+    private Long userCouponId;
 }

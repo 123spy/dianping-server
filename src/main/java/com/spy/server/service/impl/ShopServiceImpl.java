@@ -10,6 +10,7 @@ import com.spy.server.common.ErrorCode;
 import com.spy.server.constant.CommonConstant;
 import com.spy.server.exception.BusinessException;
 import com.spy.server.model.domain.Category;
+import com.spy.server.model.domain.Favorite;
 import com.spy.server.model.domain.Shop;
 import com.spy.server.model.domain.User;
 import com.spy.server.model.dto.shop.ShopAddRequest;
@@ -19,10 +20,12 @@ import com.spy.server.model.vo.ShopVO;
 import com.spy.server.model.vo.UserVO;
 import com.spy.server.mapper.ShopMapper;
 import com.spy.server.service.CategoryService;
+import com.spy.server.service.FavoriteService;
 import com.spy.server.service.ShopService;
 import com.spy.server.service.UserService;
 import com.spy.server.utils.SqlUtil;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -50,9 +53,11 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop>
     @Resource
     private CategoryService categoryService;
 
+    @Resource
+    private FavoriteService favoriteService;
 
     @Override
-    public ShopVO getShopVO(Shop shop) {
+    public ShopVO getShopVO(Shop shop, HttpServletRequest request) {
         ShopVO shopVO = new ShopVO();
         if(shop==null){
             return shopVO;
@@ -74,6 +79,17 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop>
             }
         }
 
+        // 获取一下当前登录用户，并检查是否收藏过
+        User loginUser = userService.getLoginUserAllowNull(request);
+        if(loginUser != null) {
+            QueryWrapper<Favorite> favoriteQueryWrapper = new QueryWrapper<>();
+            favoriteQueryWrapper.eq("userId", loginUser.getId());
+            favoriteQueryWrapper.eq("shopId", shop.getId());
+            long count = favoriteService.count(favoriteQueryWrapper);
+            shopVO.setIsFavorite(count > 0);
+        } else {
+            shopVO.setIsFavorite(false);
+        }
         return shopVO;
     }
 
@@ -300,23 +316,23 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop>
     }
 
     @Override
-    public List<ShopVO> getShopVO(List<Shop> records) {
+    public List<ShopVO> getShopVO(List<Shop> records, HttpServletRequest request) {
         if (CollectionUtils.isEmpty(records)) {
             return new ArrayList<>();
         }
         List<ShopVO> shopVOList = records.stream().map(shop -> {
-            return getShopVO(shop);
+            return getShopVO(shop, request);
         }).collect(Collectors.toList());
         return shopVOList;
     }
 
     @Override
-    public Page<ShopVO> listShopVOByPage(ShopQueryRequest shopQueryRequest) {
+    public Page<ShopVO> listShopVOByPage(ShopQueryRequest shopQueryRequest, HttpServletRequest request) {
         int current = shopQueryRequest.getCurrent();
         int pageSize = shopQueryRequest.getPageSize();
         Page<Shop> shopPage = this.page(new Page<>(current, pageSize), this.getQueryWrapper(shopQueryRequest));
         Page<ShopVO> shopVOPage = new Page<>(current, pageSize, shopPage.getTotal());
-        List<ShopVO> shopVoList = this.getShopVO(shopPage.getRecords());
+        List<ShopVO> shopVoList = this.getShopVO(shopPage.getRecords(), request);
         shopVOPage.setRecords(shopVoList);
         return shopVOPage;
     }

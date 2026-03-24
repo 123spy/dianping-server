@@ -25,6 +25,11 @@ public class ShopVO {
     private UserVO userVO;
 
     /**
+     * 是否收藏过
+     */
+    private Boolean isFavorite;
+
+    /**
      * 店铺名称
      */
     private String name;

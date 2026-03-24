@@ -2,6 +2,8 @@ package com.spy.server.service.impl;
 
 import cn.hutool.core.lang.UUID;
 import cn.hutool.core.util.ObjectUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.spy.server.common.ErrorCode;
@@ -10,17 +12,20 @@ import com.spy.server.model.domain.Coupon;
 import com.spy.server.model.domain.CouponOrder;
 import com.spy.server.mapper.CouponOrderMapper;
 import com.spy.server.model.domain.User;
+import com.spy.server.model.domain.UserCoupon;
 import com.spy.server.model.dto.couponorder.CouponOrderCancelRequest;
 import com.spy.server.model.dto.couponorder.CouponOrderPayRequest;
 import com.spy.server.model.dto.couponorder.CouponOrderSubmitRequest;
 import com.spy.server.service.CouponOrderService;
 import com.spy.server.service.CouponService;
+import com.spy.server.service.UserCouponService;
 import com.spy.server.service.UserService;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,6 +48,9 @@ public class CouponOrderServiceImpl extends ServiceImpl<CouponOrderMapper, Coupo
     @Resource
     private CouponService couponService;
 
+
+    @Resource
+    private UserCouponService userCouponService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -161,7 +169,7 @@ public class CouponOrderServiceImpl extends ServiceImpl<CouponOrderMapper, Coupo
             couponOrder.setUserId(order.getUserId());
             couponOrder.setShopId(order.getShopId());
             couponOrder.setCouponId(order.getCouponId());
-            couponOrder.setPayType(order.getPayType());
+            couponOrder.setPayType(type);
             couponOrder.setTotalAmount(order.getTotalAmount());
             couponOrder.setPayAmount(new BigDecimal(0));
             couponOrder.setStatus(1);
@@ -169,6 +177,33 @@ public class CouponOrderServiceImpl extends ServiceImpl<CouponOrderMapper, Coupo
             couponOrder.setCancelTime(null);
             couponOrder.setFinishTime(null);
             result = this.updateById(couponOrder);
+
+            if (!result) {
+                throw new BusinessException(ErrorCode.OPERATION_ERROR, "订单支付失败");
+            }
+
+            // 要将这个优惠券加入到用户的列表中
+            UserCoupon userCoupon = new UserCoupon();
+
+            userCoupon.setUserId(loginUser.getId());
+            userCoupon.setCouponId(couponOrder.getCouponId());
+            userCoupon.setOrderId(couponOrder.getId());
+            // 生成随机的6位code串，只有数字和大写字母
+            userCoupon.setCode(RandomStringUtils.random(6, true, true));
+            // '用户券状态：0-未使用 1-已使用 2-已过期 3-已退款'
+            userCoupon.setStatus(0);
+            userCoupon.setObtainTime(new Date());
+            userCoupon.setUseTime(null);
+
+
+            // 这里设置的是10天，10天后会过期
+            long time = 10L * 24 * 60 * 60 * 1000;
+            Date tenDaysLater = new Date(new Date().getTime() + time);
+            userCoupon.setExpireTime(tenDaysLater);
+            boolean res = userCouponService.save(userCoupon);
+            if (!res) {
+                throw new BusinessException(ErrorCode.OPERATION_ERROR, "系统错误");
+            }
         } else if (totalAmount.intValue() > 0) {
             // 如果需要支付的金额大于0
             try {
@@ -183,7 +218,7 @@ public class CouponOrderServiceImpl extends ServiceImpl<CouponOrderMapper, Coupo
                 couponOrder.setShopId(order.getShopId());
                 couponOrder.setCouponId(order.getCouponId());
                 couponOrder.setTotalAmount(order.getTotalAmount());
-                couponOrder.setPayType(order.getPayType());
+                couponOrder.setPayType(type);
                 couponOrder.setPayAmount(order.getTotalAmount());
                 couponOrder.setStatus(1);
                 couponOrder.setPayTime(new Date());
@@ -191,22 +226,119 @@ public class CouponOrderServiceImpl extends ServiceImpl<CouponOrderMapper, Coupo
                 couponOrder.setFinishTime(null);
                 result = this.updateById(couponOrder);
 
+                if (!result) {
+                    throw new BusinessException(ErrorCode.OPERATION_ERROR, "订单支付失败");
+                }
+
+                // 要将这个优惠券加入到用户的列表中
+                UserCoupon userCoupon = new UserCoupon();
+
+                userCoupon.setUserId(loginUser.getId());
+                userCoupon.setCouponId(couponOrder.getCouponId());
+                userCoupon.setOrderId(couponOrder.getId());
+                // 生成随机的6位code串，只有数字和大写字母
+                userCoupon.setCode(RandomStringUtils.random(6, true, true));
+                // '用户券状态：0-未使用 1-已使用 2-已过期 3-已退款'
+                userCoupon.setStatus(0);
+                userCoupon.setObtainTime(new Date());
+                userCoupon.setUseTime(null);
+
+
+                // 这里设置的是10天，10天后会过期
+                long time = 10L * 24 * 60 * 60 * 1000;
+                Date tenDaysLater = new Date(new Date().getTime() + time);
+                userCoupon.setExpireTime(tenDaysLater);
+                boolean res = userCouponService.save(userCoupon);
+                if (!res) {
+                    throw new BusinessException(ErrorCode.OPERATION_ERROR, "系统错误");
+                }
+
             } catch (InterruptedException e) {
-                log.error("订单支付失败");
+                throw new BusinessException(ErrorCode.OPERATION_ERROR, "订单付款失败");
             }
         } else {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "支付金额异常");
         }
 
-        if(!result) {
-            throw new BusinessException(ErrorCode.OPERATION_ERROR, "订单支付失败");
-        }
         return result;
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Boolean cancelCouponOrder(CouponOrderCancelRequest couponOrderCancelRequest, HttpServletRequest request) {
-        return null;
+        // 校验，这个订单存在不存在
+        User loginUser = userService.getLoginUser(request);
+        Long id = couponOrderCancelRequest.getId();
+        if (id == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "参数错误");
+        }
+        CouponOrder order = this.getById(id);
+        if (order == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "订单不存在");
+        }
+
+        if (!order.getUserId().equals(loginUser.getId())) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "无权限取消订单");
+        }
+        if (couponOrderCancelRequest.getUserCouponId() == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "参数非法");
+        }
+        UserCoupon userCoupon = userCouponService.getById(couponOrderCancelRequest.getUserCouponId());
+        if (userCoupon == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "优惠券不存在");
+        }
+
+        // 然后看看这个订单是个什么状态
+        Integer status = order.getStatus();
+        // 订单状态：0-待支付 1-已支付 2-已取消 3-已完成 4-已退款
+        if (status == 0) {
+            // 待支付状态，需要修改当前的这个order状态
+            CouponOrder newCouponOrder = new CouponOrder();
+            BeanUtils.copyProperties(order, newCouponOrder);
+            newCouponOrder.setStatus(2);
+            newCouponOrder.setCancelTime(new Date());
+            boolean res = this.updateById(newCouponOrder);
+            if (!res) {
+                throw new BusinessException(ErrorCode.SYSTEM_ERROR, "取消订单失败");
+            }
+        } else if (status == 1) {
+            // jiangcouponorder数据更新
+            CouponOrder newCouponOrder = new CouponOrder();
+            BeanUtils.copyProperties(order, newCouponOrder);
+            newCouponOrder.setStatus(4);
+            newCouponOrder.setCancelTime(new Date());
+
+            boolean res = this.updateById(newCouponOrder);
+            if (!res) {
+                throw new BusinessException(ErrorCode.SYSTEM_ERROR, "取消订单失败");
+            }
+            // 已经支付了的，需要进行退款
+            try {
+                log.info("{}订单使用{}退款中....", order.getOrderNo(), order.getPayType());
+                Thread.sleep(3000L);
+                log.info("{}订单使用{}退款完成....", order.getOrderNo(), order.getPayType());
+            } catch (InterruptedException e) {
+                throw new BusinessException(ErrorCode.SYSTEM_ERROR, "退款失败");
+            }
+            // 将usercoupon数据也更新
+
+            // 用户券状态：0-未使用 1-已使用 2-已过期 3-已退款
+            userCoupon.setStatus(3);
+            boolean result = userCouponService.updateById(userCoupon);
+            if(!result){
+                throw new BusinessException(ErrorCode.PARAMS_ERROR, "更新失败");
+            }
+        } else if (status == 2) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "订单已经取消，请勿重复取消");
+        } else if (status == 3) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "订单已经完成，无法进行取消");
+        } else if (status == 4) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "订单已经退款，无法进行取消");
+        } else {
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "参数异常");
+        }
+
+        return true;
     }
 }
 

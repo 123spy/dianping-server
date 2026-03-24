@@ -110,7 +110,7 @@ public class FavoriteController {
         if (favorite == null) {
             throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
         }
-        return ResultUtil.success(favoriteService.getFavoriteVO(favorite));
+        return ResultUtil.success(favoriteService.getFavoriteVO(favorite, request));
     }
 
     @PostMapping("/list/page")
@@ -130,7 +130,7 @@ public class FavoriteController {
         if (favoriteQueryRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        Page<FavoriteVO> favoriteVOPage = favoriteService.listFavoriteVOByPage(favoriteQueryRequest);
+        Page<FavoriteVO> favoriteVOPage = favoriteService.listFavoriteVOByPage(favoriteQueryRequest, request);
         return ResultUtil.success(favoriteVOPage);
     }
 }

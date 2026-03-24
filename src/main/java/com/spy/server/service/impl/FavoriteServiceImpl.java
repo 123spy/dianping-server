@@ -25,6 +25,7 @@ import com.spy.server.utils.SqlUtil;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.BeanUtils;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -38,11 +39,12 @@ public class FavoriteServiceImpl extends ServiceImpl<FavoriteMapper, Favorite> i
     @Resource
     private UserService userService;
 
+    @Lazy
     @Resource
     private ShopService shopService;
 
     @Override
-    public FavoriteVO getFavoriteVO(Favorite favorite) {
+    public FavoriteVO getFavoriteVO(Favorite favorite, HttpServletRequest request) {
         if (favorite == null) {
             return null;
         }
@@ -58,7 +60,7 @@ public class FavoriteServiceImpl extends ServiceImpl<FavoriteMapper, Favorite> i
 
         Shop shop = shopService.getById(favorite.getShopId());
         if (shop != null) {
-            ShopVO shopVO = shopService.getShopVO(shop);
+            ShopVO shopVO = shopService.getShopVO(shop, request);
             favoriteVO.setShopVO(shopVO);
         }
 
@@ -66,7 +68,7 @@ public class FavoriteServiceImpl extends ServiceImpl<FavoriteMapper, Favorite> i
     }
 
     @Override
-    public List<FavoriteVO> getFavoriteVO(List<Favorite> records) {
+    public List<FavoriteVO> getFavoriteVO(List<Favorite> records, HttpServletRequest request) {
         if (CollectionUtils.isEmpty(records)) {
             return new ArrayList<>();
         }
@@ -96,7 +98,7 @@ public class FavoriteServiceImpl extends ServiceImpl<FavoriteMapper, Favorite> i
             List<Shop> shopList = shopService.listByIds(shopIdSet);
             shopVOMap = shopList.stream().collect(Collectors.toMap(
                     Shop::getId,
-                    shop -> shopService.getShopVO(shop),
+                    shop -> shopService.getShopVO(shop, request),
                     (a, b) -> a
             ));
         }
@@ -295,13 +297,13 @@ public class FavoriteServiceImpl extends ServiceImpl<FavoriteMapper, Favorite> i
     }
 
     @Override
-    public Page<FavoriteVO> listFavoriteVOByPage(FavoriteQueryRequest favoriteQueryRequest) {
+    public Page<FavoriteVO> listFavoriteVOByPage(FavoriteQueryRequest favoriteQueryRequest, HttpServletRequest request) {
         int current = favoriteQueryRequest.getCurrent();
         int pageSize = favoriteQueryRequest.getPageSize();
 
         Page<Favorite> favoritePage = this.page(new Page<>(current, pageSize), this.getQueryWrapper(favoriteQueryRequest));
         Page<FavoriteVO> favoriteVOPage = new Page<>(current, pageSize, favoritePage.getTotal());
-        favoriteVOPage.setRecords(this.getFavoriteVO(favoritePage.getRecords()));
+        favoriteVOPage.setRecords(this.getFavoriteVO(favoritePage.getRecords(), request));
         return favoriteVOPage;
     }
 

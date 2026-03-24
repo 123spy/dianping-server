@@ -48,7 +48,7 @@ public class ShopRatingServiceImpl extends ServiceImpl<ShopRatingMapper, ShopRat
     private ShopService shopService;
 
     @Override
-    public ShopRatingVO getShopRatingVO(ShopRating shopRating) {
+    public ShopRatingVO getShopRatingVO(ShopRating shopRating, HttpServletRequest request) {
         if (shopRating == null) {
             return null;
         }
@@ -64,7 +64,7 @@ public class ShopRatingServiceImpl extends ServiceImpl<ShopRatingMapper, ShopRat
 
         Shop shop = shopService.getById(shopRating.getShopId());
         if (shop != null) {
-            ShopVO shopVO = shopService.getShopVO(shop);
+            ShopVO shopVO = shopService.getShopVO(shop, request);
             shopRatingVO.setShopVO(shopVO);
         }
 
@@ -72,7 +72,7 @@ public class ShopRatingServiceImpl extends ServiceImpl<ShopRatingMapper, ShopRat
     }
 
     @Override
-    public List<ShopRatingVO> getShopRatingVO(List<ShopRating> records) {
+    public List<ShopRatingVO> getShopRatingVO(List<ShopRating> records, HttpServletRequest request) {
         if (CollectionUtils.isEmpty(records)) {
             return new ArrayList<>();
         }
@@ -102,7 +102,7 @@ public class ShopRatingServiceImpl extends ServiceImpl<ShopRatingMapper, ShopRat
             List<Shop> shopList = shopService.listByIds(shopIdSet);
             shopVOMap = shopList.stream().collect(Collectors.toMap(
                     Shop::getId,
-                    shop -> shopService.getShopVO(shop),
+                    shop -> shopService.getShopVO(shop, request),
                     (a, b) -> a
             ));
         }
@@ -305,13 +305,13 @@ public class ShopRatingServiceImpl extends ServiceImpl<ShopRatingMapper, ShopRat
     }
 
     @Override
-    public Page<ShopRatingVO> listShopRatingVOByPage(ShopRatingQueryRequest shopRatingQueryRequest) {
+    public Page<ShopRatingVO> listShopRatingVOByPage(ShopRatingQueryRequest shopRatingQueryRequest, HttpServletRequest request) {
         int current = shopRatingQueryRequest.getCurrent();
         int pageSize = shopRatingQueryRequest.getPageSize();
 
         Page<ShopRating> shopRatingPage = this.page(new Page<>(current, pageSize), this.getQueryWrapper(shopRatingQueryRequest));
         Page<ShopRatingVO> shopRatingVOPage = new Page<>(current, pageSize, shopRatingPage.getTotal());
-        shopRatingVOPage.setRecords(this.getShopRatingVO(shopRatingPage.getRecords()));
+        shopRatingVOPage.setRecords(this.getShopRatingVO(shopRatingPage.getRecords(), request));
         return shopRatingVOPage;
     }
 

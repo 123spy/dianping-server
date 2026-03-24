@@ -8,6 +8,7 @@ import com.spy.server.model.dto.shop.ShopAddRequest;
 import com.spy.server.model.dto.shop.ShopQueryRequest;
 import com.spy.server.model.dto.shop.ShopUpdateRequest;
 import com.spy.server.model.vo.ShopVO;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.List;
 
@@ -17,7 +18,7 @@ import java.util.List;
  * @createDate 2026-03-22 13:49:43
 */
 public interface ShopService extends IService<Shop> {
-    ShopVO getShopVO(Shop shop);
+    ShopVO getShopVO(Shop shop, HttpServletRequest request);
 
     Long addShop(ShopAddRequest shopAddRequest);
 
@@ -25,7 +26,7 @@ public interface ShopService extends IService<Shop> {
 
     Wrapper<Shop> getQueryWrapper(ShopQueryRequest shopQueryRequest);
 
-    List<ShopVO> getShopVO(List<Shop> records);
+    List<ShopVO> getShopVO(List<Shop> records, HttpServletRequest request);
 
-    Page<ShopVO> listShopVOByPage(ShopQueryRequest shopQueryRequest);
+    Page<ShopVO> listShopVOByPage(ShopQueryRequest shopQueryRequest, HttpServletRequest request);
 }

@@ -20,9 +20,9 @@ import java.util.List;
 * @createDate 2026-03-22 13:49:45
 */
 public interface ShopRatingService extends IService<ShopRating> {
-    ShopRatingVO getShopRatingVO(ShopRating shopRating);
+    ShopRatingVO getShopRatingVO(ShopRating shopRating, HttpServletRequest request);
 
-    List<ShopRatingVO> getShopRatingVO(List<ShopRating> records);
+    List<ShopRatingVO> getShopRatingVO(List<ShopRating> records, HttpServletRequest request);
 
     Long addShopRating(ShopRatingAddRequest shopRatingAddRequest);
 
@@ -36,7 +36,7 @@ public interface ShopRatingService extends IService<ShopRating> {
 
     Wrapper<ShopRating> getQueryWrapper(ShopRatingQueryRequest shopRatingQueryRequest);
 
-    Page<ShopRatingVO> listShopRatingVOByPage(ShopRatingQueryRequest shopRatingQueryRequest);
+    Page<ShopRatingVO> listShopRatingVOByPage(ShopRatingQueryRequest shopRatingQueryRequest, HttpServletRequest request);
 
     void recalculateShopRatingCount(Long shopId);
 }

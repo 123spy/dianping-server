@@ -109,7 +109,7 @@ public class ShopRatingController {
         if (shopRating == null) {
             throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
         }
-        return ResultUtil.success(shopRatingService.getShopRatingVO(shopRating));
+        return ResultUtil.success(shopRatingService.getShopRatingVO(shopRating, request));
     }
 
     @PostMapping("/list/page")
@@ -129,7 +129,7 @@ public class ShopRatingController {
         if (shopRatingQueryRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        Page<ShopRatingVO> shopRatingVOPage = shopRatingService.listShopRatingVOByPage(shopRatingQueryRequest);
+        Page<ShopRatingVO> shopRatingVOPage = shopRatingService.listShopRatingVOByPage(shopRatingQueryRequest, request);
         return ResultUtil.success(shopRatingVOPage);
     }
 }

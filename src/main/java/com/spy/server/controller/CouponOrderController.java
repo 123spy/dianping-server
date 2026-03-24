@@ -1,12 +1,10 @@
 package com.spy.server.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.spy.server.annotation.AuthCheck;
 import com.spy.server.common.BaseResponse;
-import com.spy.server.common.DeleteRequest;
 import com.spy.server.common.ErrorCode;
-import com.spy.server.constant.UserConstant;
 import com.spy.server.exception.BusinessException;
+import com.spy.server.model.domain.CouponOrder;
 import com.spy.server.model.domain.User;
 import com.spy.server.model.dto.couponorder.CouponOrderCancelRequest;
 import com.spy.server.model.dto.couponorder.CouponOrderPayRequest;
@@ -71,23 +69,10 @@ public class CouponOrderController {
         if(couponOrderCancelRequest.getId() == null || couponOrderCancelRequest.getId() < 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "优惠券参数非法");
         }
+        if(couponOrderCancelRequest.getUserCouponId() == null || couponOrderCancelRequest.getUserCouponId() < 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "优惠券参数非法");
+        }
         Boolean result = couponOrderService.cancelCouponOrder(couponOrderCancelRequest, request);
         return ResultUtil.success(result);
-    }
-
-
-    @PostMapping("/revoke")
-    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
-    public BaseResponse<Boolean> deleteCouponOrder(@RequestBody DeleteRequest deleteRequest) {
-        // 1. 校验
-        if (deleteRequest == null || deleteRequest.getId() <= 0) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
-        // 2. 删除
-        boolean result = couponOrderService.removeById(deleteRequest.getId());
-        if (!result) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
-        return ResultUtil.success(true);
     }
 }

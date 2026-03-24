@@ -15,9 +15,9 @@ import java.util.List;
 
 public interface FavoriteService extends IService<Favorite> {
 
-    FavoriteVO getFavoriteVO(Favorite favorite);
+    FavoriteVO getFavoriteVO(Favorite favorite, HttpServletRequest request);
 
-    List<FavoriteVO> getFavoriteVO(List<Favorite> records);
+    List<FavoriteVO> getFavoriteVO(List<Favorite> records, HttpServletRequest request);
 
     Long addFavorite(FavoriteAddRequest favoriteAddRequest);
 
@@ -31,7 +31,7 @@ public interface FavoriteService extends IService<Favorite> {
 
     Wrapper<Favorite> getQueryWrapper(FavoriteQueryRequest favoriteQueryRequest);
 
-    Page<FavoriteVO> listFavoriteVOByPage(FavoriteQueryRequest favoriteQueryRequest);
+    Page<FavoriteVO> listFavoriteVOByPage(FavoriteQueryRequest favoriteQueryRequest, HttpServletRequest request);
 
     void recalculateFavoriteCount(Long shopId);
 }

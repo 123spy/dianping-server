@@ -84,7 +84,7 @@ public class ShopController {
         if (shop == null) {
             throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
         }
-        return ResultUtil.success(shopService.getShopVO(shop));
+        return ResultUtil.success(shopService.getShopVO(shop, request));
     }
 
     @PostMapping("/list/page")
@@ -109,7 +109,7 @@ public class ShopController {
         if (shopQueryRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        Page<ShopVO> shopVOPage = shopService.listShopVOByPage(shopQueryRequest);
+        Page<ShopVO> shopVOPage = shopService.listShopVOByPage(shopQueryRequest, request);
         return ResultUtil.success(shopVOPage);
     }
 }

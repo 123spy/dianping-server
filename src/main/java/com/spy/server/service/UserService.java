@@ -41,4 +41,5 @@ public interface UserService extends IService<User> {
 
     Boolean updateUserMyInfo(UserUpdateMyInfoRequest userUpdateMyInfoRequest);
 
+    User getLoginUserAllowNull(HttpServletRequest request);
 }
