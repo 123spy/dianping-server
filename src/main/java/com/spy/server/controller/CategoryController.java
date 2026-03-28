@@ -17,6 +17,7 @@ import com.spy.server.utils.ResultUtil;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,6 +29,9 @@ public class CategoryController {
 
     @Resource
     private CategoryService categoryService;
+
+    @Resource
+    private RedisTemplate<String, Object> redisTemplate;
 
     @PostMapping("/add")
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)

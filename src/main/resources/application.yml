@@ -3,6 +3,12 @@ server:
   servlet:
     context-path: /api
 spring:
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      database: 0
+      connect-timeout: 5000
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/dianping_project?serverTimezone=Asia/Shanghai

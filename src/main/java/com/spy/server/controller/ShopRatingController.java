@@ -7,6 +7,7 @@ import com.spy.server.common.DeleteRequest;
 import com.spy.server.common.ErrorCode;
 import com.spy.server.constant.UserConstant;
 import com.spy.server.exception.BusinessException;
+import com.spy.server.model.domain.Shop;
 import com.spy.server.model.domain.ShopRating;
 import com.spy.server.model.domain.User;
 import com.spy.server.model.dto.shoprating.ShopRatingAddRequest;
@@ -14,11 +15,15 @@ import com.spy.server.model.dto.shoprating.ShopRatingQueryRequest;
 import com.spy.server.model.dto.shoprating.ShopRatingUpdateRequest;
 import com.spy.server.model.vo.ShopRatingVO;
 import com.spy.server.service.ShopRatingService;
+import com.spy.server.service.ShopService;
 import com.spy.server.service.UserService;
 import com.spy.server.utils.ResultUtil;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -32,6 +37,11 @@ public class ShopRatingController {
     @Resource
     private UserService userService;
 
+    @Resource
+    private RedisTemplate redisTemplate;
+    @Autowired
+    private ShopService shopService;
+
     @PostMapping("/add")
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     public BaseResponse<Long> addShopRating(@RequestBody ShopRatingAddRequest shopRatingAddRequest) {
@@ -43,6 +53,7 @@ public class ShopRatingController {
     }
 
     @PostMapping("/submit")
+    @Transactional(rollbackFor = Exception.class)
     public BaseResponse<Long> submitShopRating(@RequestBody ShopRatingAddRequest shopRatingAddRequest, HttpServletRequest request) {
         if (shopRatingAddRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -50,15 +61,36 @@ public class ShopRatingController {
         User loginUser = userService.getLoginUser(request);
         shopRatingAddRequest.setUserId(loginUser.getId());
         Long id = shopRatingService.submitShopRating(shopRatingAddRequest);
+
+        // 到这里为止，mysql已经更新成功了，因此在这里，直接将redis中的数据进行更新
+        Shop shop = shopService.getById(shopRatingAddRequest.getShopId());
+        String key = "ranking:shop:rating";
+        Boolean result = redisTemplate.opsForZSet().addIfAbsent(key, shop.getId(), shop.getAvgScore().doubleValue());
+        if(!result) {
+            throw new BusinessException(ErrorCode.OPERATION_ERROR, "操作失败");
+        }
         return ResultUtil.success(id);
     }
 
     @PostMapping("/revoke")
+    @Transactional(rollbackFor = Exception.class)
     public BaseResponse<Boolean> revokeShopRating(@RequestBody DeleteRequest deleteRequest, HttpServletRequest request) {
         if (deleteRequest == null || deleteRequest.getId() == null || deleteRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
+        ShopRating shopRating = shopRatingService.getById(deleteRequest.getId());
+
         boolean result = shopRatingService.revokeShopRating(deleteRequest, request);
+
+
+
+        // 到这里为止，mysql已经更新成功了，因此在这里，直接将redis中的数据进行更新
+        Shop shop = shopService.getById(shopRating.getShopId());
+        String key = "ranking:shop:rating";
+        Boolean res = redisTemplate.opsForZSet().addIfAbsent(key, shop.getId(), shop.getAvgScore().doubleValue());
+        if(!res) {
+            throw new BusinessException(ErrorCode.OPERATION_ERROR, "操作失败");
+        }
         return ResultUtil.success(result);
     }
 

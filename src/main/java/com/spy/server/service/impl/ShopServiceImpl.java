@@ -337,7 +337,3 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop>
         return shopVOPage;
     }
 }
-
-
-
-
