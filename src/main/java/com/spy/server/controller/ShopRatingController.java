@@ -26,10 +26,18 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
+
 @RestController
 @RequestMapping("/shopRating")
 @Slf4j
 public class ShopRatingController {
+
+    private static final String SHOP_GET_VO_CACHE_PREFIX = "dianping:shop:get:vo:";
+    private static final String SHOP_LIST_VO_CACHE_PREFIX = "dianping:shop:list:page:vo:";
+    private static final String SHOP_RATING_RANKING_KEY = "ranking:shop:rating";
 
     @Resource
     private ShopRatingService shopRatingService;
@@ -49,6 +57,9 @@ public class ShopRatingController {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         Long id = shopRatingService.addShopRating(shopRatingAddRequest);
+        Shop shop = shopService.getById(shopRatingAddRequest.getShopId());
+        clearShopRelatedCache(shopRatingAddRequest.getShopId());
+        refreshShopRatingRanking(shop);
         return ResultUtil.success(id);
     }
 
@@ -62,13 +73,9 @@ public class ShopRatingController {
         shopRatingAddRequest.setUserId(loginUser.getId());
         Long id = shopRatingService.submitShopRating(shopRatingAddRequest);
 
-        // 到这里为止，mysql已经更新成功了，因此在这里，直接将redis中的数据进行更新
         Shop shop = shopService.getById(shopRatingAddRequest.getShopId());
-        String key = "ranking:shop:rating";
-        Boolean result = redisTemplate.opsForZSet().addIfAbsent(key, shop.getId(), shop.getAvgScore().doubleValue());
-        if(!result) {
-            throw new BusinessException(ErrorCode.OPERATION_ERROR, "操作失败");
-        }
+        clearShopRelatedCache(shopRatingAddRequest.getShopId());
+        refreshShopRatingRanking(shop);
         return ResultUtil.success(id);
     }
 
@@ -82,30 +89,34 @@ public class ShopRatingController {
 
         boolean result = shopRatingService.revokeShopRating(deleteRequest, request);
 
-
-
-        // 到这里为止，mysql已经更新成功了，因此在这里，直接将redis中的数据进行更新
-        Shop shop = shopService.getById(shopRating.getShopId());
-        String key = "ranking:shop:rating";
-        Boolean res = redisTemplate.opsForZSet().addIfAbsent(key, shop.getId(), shop.getAvgScore().doubleValue());
-        if(!res) {
-            throw new BusinessException(ErrorCode.OPERATION_ERROR, "操作失败");
+        if (shopRating != null) {
+            Shop shop = shopService.getById(shopRating.getShopId());
+            clearShopRelatedCache(shopRating.getShopId());
+            refreshShopRatingRanking(shop);
         }
         return ResultUtil.success(result);
     }
 
     @PostMapping("/delete")
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    @Transactional(rollbackFor = Exception.class)
     public BaseResponse<Boolean> deleteShopRating(@RequestBody DeleteRequest deleteRequest) {
         if (deleteRequest == null || deleteRequest.getId() == null || deleteRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
+        ShopRating oldShopRating = shopRatingService.getById(deleteRequest.getId());
         boolean result = shopRatingService.adminDeleteShopRating(deleteRequest.getId());
+        if (result && oldShopRating != null) {
+            Shop shop = shopService.getById(oldShopRating.getShopId());
+            clearShopRelatedCache(oldShopRating.getShopId());
+            refreshShopRatingRanking(shop);
+        }
         return ResultUtil.success(result);
     }
 
     @PostMapping("/update")
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    @Transactional(rollbackFor = Exception.class)
     public BaseResponse<Boolean> updateShopRating(@RequestBody ShopRatingUpdateRequest shopRatingUpdateRequest, HttpServletRequest request) {
         if (shopRatingUpdateRequest == null || shopRatingUpdateRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -115,6 +126,17 @@ public class ShopRatingController {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         Boolean result = shopRatingService.updateShopRating(shopRatingUpdateRequest);
+
+        ShopRating newShopRating = shopRatingService.getById(shopRatingUpdateRequest.getId());
+        if (oldShopRating.getShopId() != null) {
+            clearShopRelatedCache(oldShopRating.getShopId());
+            refreshShopRatingRanking(shopService.getById(oldShopRating.getShopId()));
+        }
+        if (newShopRating != null && newShopRating.getShopId() != null
+                && !newShopRating.getShopId().equals(oldShopRating.getShopId())) {
+            clearShopRelatedCache(newShopRating.getShopId());
+            refreshShopRatingRanking(shopService.getById(newShopRating.getShopId()));
+        }
 
         return ResultUtil.success(result);
     }
@@ -163,5 +185,33 @@ public class ShopRatingController {
         }
         Page<ShopRatingVO> shopRatingVOPage = shopRatingService.listShopRatingVOByPage(shopRatingQueryRequest, request);
         return ResultUtil.success(shopRatingVOPage);
+    }
+
+    private void clearShopRelatedCache(Long shopId) {
+        if (shopId == null || shopId <= 0) {
+            return;
+        }
+        redisTemplate.delete(SHOP_GET_VO_CACHE_PREFIX + shopId);
+        Set<String> keys = redisTemplate.keys(SHOP_LIST_VO_CACHE_PREFIX + "*");
+        if (keys != null && !keys.isEmpty()) {
+            redisTemplate.delete(keys);
+        }
+    }
+
+    private void refreshShopRatingRanking(Shop shop) {
+        if (shop == null || shop.getId() == null) {
+            return;
+        }
+        Integer auditStatus = shop.getAuditStatus();
+        Integer businessStatus = shop.getBusinessStatus();
+        if (auditStatus != null && auditStatus == 1
+                && businessStatus != null && businessStatus == 1
+                && shop.getAvgScore() != null) {
+            redisTemplate.opsForZSet().add(SHOP_RATING_RANKING_KEY, shop.getId(), shop.getAvgScore().doubleValue());
+            int randomTtl = ThreadLocalRandom.current().nextInt(60);
+            redisTemplate.expire(SHOP_RATING_RANKING_KEY, 60 + randomTtl, TimeUnit.SECONDS);
+        } else {
+            redisTemplate.opsForZSet().remove(SHOP_RATING_RANKING_KEY, shop.getId());
+        }
     }
 }
