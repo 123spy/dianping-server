@@ -45,7 +45,7 @@ public class AccountUtil {
             return false;
         }
         // 长度校验
-        if (userPassword.length() < 6 || userPassword.length() > 20) {
+        if (userPassword.length() < 5 || userPassword.length() > 20) {
             return false;
         }
         // 账户不能包含特殊字符
