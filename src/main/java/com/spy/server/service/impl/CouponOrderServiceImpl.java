@@ -25,6 +25,8 @@ import com.spy.server.model.vo.CouponOrderVO;
 import com.spy.server.model.vo.CouponVO;
 import com.spy.server.model.vo.ShopVO;
 import com.spy.server.model.vo.UserVO;
+import com.spy.server.mq.model.CouponOrderEvent;
+import com.spy.server.mq.producer.CouponOrderEventProducer;
 import com.spy.server.service.CouponOrderService;
 import com.spy.server.service.CouponService;
 import com.spy.server.service.ShopService;
@@ -38,18 +40,15 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.time.LocalDateTime;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -69,6 +68,15 @@ public class CouponOrderServiceImpl extends ServiceImpl<CouponOrderMapper, Coupo
     @Lazy
     @Resource
     private ShopService shopService;
+
+    @Resource
+    private RedisTemplate redisTemplate;
+
+    @Resource
+    private DefaultRedisScript<Long> seckillScript;
+
+    @Resource
+    private CouponOrderEventProducer couponOrderEventProducer;
 
     @Override
     public CouponOrderVO getCouponOrderVO(CouponOrder couponOrder, HttpServletRequest request) {
@@ -278,42 +286,44 @@ public class CouponOrderServiceImpl extends ServiceImpl<CouponOrderMapper, Coupo
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Long submitCouponOrder(CouponOrderSubmitRequest couponOrderSubmitRequest, HttpServletRequest request) {
-        synchronized (couponOrderSubmitRequest.getCouponId().toString().intern()) {
-            Long shopId = couponOrderSubmitRequest.getShopId();
-            Long couponId = couponOrderSubmitRequest.getCouponId();
-            Coupon coupon = couponService.getById(couponId);
-            if (coupon == null) {
-                throw new BusinessException(ErrorCode.PARAMS_ERROR, "优惠券不存在");
-            }
-            Integer stock = coupon.getStock();
-            if (stock <= 0) {
-                throw new BusinessException(ErrorCode.PARAMS_ERROR, "已经卖完");
-            }
+        // 这里，改成使用redis的lua脚本来
+        User loginUser = userService.getLoginUser(request);
+        Long shopId = couponOrderSubmitRequest.getShopId();
+        Long couponId = couponOrderSubmitRequest.getCouponId();
 
-            coupon.setStock(coupon.getStock() - 1);
-            couponService.updateById(coupon);
+        String stockKey = "coupon:stock:" + couponId;
+        String userSetKey = "coupon:user:" + couponId;
 
-            CouponOrder couponOrder = new CouponOrder();
-            couponOrder.setOrderNo(UUID.randomUUID().toString());
+        // 0：成功
+        // 1：库存不足
+        // 2：重复购买
+        // 3：库存 key 不存在
+        Long res = (Long) redisTemplate.execute(
+                seckillScript,
+                Arrays.asList(stockKey, userSetKey),
+                loginUser.getId().toString()
+        );
+        if (res == 0) {
+            // 抢购成功
+            // 发送消息队列，让专门的消费者来处理这些消息
+            CouponOrderEvent event = new CouponOrderEvent();
+            event.setCouponId(couponId);
+            event.setUserId(loginUser.getId());
+            event.setEventTime(LocalDateTime.now());
 
-            User loginUser = userService.getLoginUser(request);
-            couponOrder.setUserId(loginUser.getId());
-            couponOrder.setShopId(shopId);
-            couponOrder.setCouponId(couponId);
-            couponOrder.setTotalAmount(coupon.getDiscountPrice());
-            couponOrder.setPayType(null);
-            couponOrder.setPayAmount(BigDecimal.ZERO);
-            couponOrder.setStatus(0);
-            couponOrder.setPayTime(null);
-            couponOrder.setCancelTime(null);
-            couponOrder.setFinishTime(null);
-
-            boolean result = this.save(couponOrder);
-            if (!result) {
-                throw new BusinessException(ErrorCode.OPERATION_ERROR, "保存失败");
-            }
-            return couponOrder.getId();
+            couponOrderEventProducer.sendCouponOrderSuccessEvent(event);
+        } else if (res == 1) {
+            // 库存不足
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "商品库存不足");
+        } else if (res == 2) {
+            // 重复购买
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "不可重复抢购");
+        } else if (res == 3) {
+            // 没有该商品
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "商品不存在");
         }
+
+        return 1L;
     }
 
     @Override

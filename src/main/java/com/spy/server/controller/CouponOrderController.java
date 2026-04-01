@@ -141,7 +141,10 @@ public class CouponOrderController {
         if (couponOrderSubmitRequest.getCouponId() == null || couponOrderSubmitRequest.getCouponId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "优惠券参数非法");
         }
-        Long id = couponOrderService.submitCouponOrder(couponOrderSubmitRequest, request);
+        Long id;
+        synchronized (couponOrderSubmitRequest.getCouponId().toString().intern()) {
+            id = couponOrderService.submitCouponOrder(couponOrderSubmitRequest, request);
+        }
         return ResultUtil.success(id);
     }
 

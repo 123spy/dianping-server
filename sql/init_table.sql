@@ -190,7 +190,7 @@ CREATE TABLE coupon_order (
                               couponId BIGINT NOT NULL COMMENT '优惠券 id',
                               totalAmount DECIMAL(10,2) NOT NULL DEFAULT 0.00 COMMENT '订单总金额',
                               payAmount DECIMAL(10,2) NOT NULL DEFAULT 0.00 COMMENT '实付金额',
-                              payType varchar(20) NOT NULL COMMENT '支付方式',
+                              payType varchar(20) COMMENT '支付方式',
                               status TINYINT NOT NULL DEFAULT 0 COMMENT '订单状态：0-待支付 1-已支付 2-已取消 3-已完成 4-已退款',
                               payTime DATETIME DEFAULT NULL COMMENT '支付时间',
                               cancelTime DATETIME DEFAULT NULL COMMENT '取消时间',

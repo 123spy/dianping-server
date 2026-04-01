@@ -14,6 +14,8 @@ import com.spy.server.model.dto.shoprating.ShopRatingAddRequest;
 import com.spy.server.model.dto.shoprating.ShopRatingQueryRequest;
 import com.spy.server.model.dto.shoprating.ShopRatingUpdateRequest;
 import com.spy.server.model.vo.ShopRatingVO;
+import com.spy.server.mq.model.ShopRatingChangedEvent;
+import com.spy.server.mq.producer.ShopRatingEventProducer;
 import com.spy.server.service.ShopRatingService;
 import com.spy.server.service.ShopService;
 import com.spy.server.service.UserService;
@@ -26,6 +28,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
@@ -49,6 +52,8 @@ public class ShopRatingController {
     private RedisTemplate redisTemplate;
     @Autowired
     private ShopService shopService;
+    @Autowired
+    private ShopRatingEventProducer shopRatingEventProducer;
 
     @PostMapping("/add")
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
@@ -73,9 +78,18 @@ public class ShopRatingController {
         shopRatingAddRequest.setUserId(loginUser.getId());
         Long id = shopRatingService.submitShopRating(shopRatingAddRequest);
 
-        Shop shop = shopService.getById(shopRatingAddRequest.getShopId());
-        clearShopRelatedCache(shopRatingAddRequest.getShopId());
-        refreshShopRatingRanking(shop);
+        // 异步更新
+        ShopRatingChangedEvent event = new ShopRatingChangedEvent();
+        event.setShopId(shopRatingAddRequest.getShopId());
+        event.setRatingId(id);
+        event.setAction("SUBMIT");
+        event.setEventTime(LocalDateTime.now());
+
+        shopRatingEventProducer.sendShopRatingChangedEvent(event);
+
+//        Shop shop = shopService.getById(shopRatingAddRequest.getShopId());
+//        clearShopRelatedCache(shopRatingAddRequest.getShopId());
+//        refreshShopRatingRanking(shop);
         return ResultUtil.success(id);
     }
 
@@ -187,6 +201,7 @@ public class ShopRatingController {
         return ResultUtil.success(shopRatingVOPage);
     }
 
+    // 清理缓存操作
     private void clearShopRelatedCache(Long shopId) {
         if (shopId == null || shopId <= 0) {
             return;
@@ -198,6 +213,7 @@ public class ShopRatingController {
         }
     }
 
+    // 更新商店分数
     private void refreshShopRatingRanking(Shop shop) {
         if (shop == null || shop.getId() == null) {
             return;

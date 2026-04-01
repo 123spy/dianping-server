@@ -24,7 +24,9 @@ import com.spy.server.utils.SqlUtil;
 import jakarta.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -44,7 +46,11 @@ public class CouponServiceImpl extends ServiceImpl<CouponMapper, Coupon>
     @Resource
     private ShopService shopService;
 
+    @Resource
+    private RedisTemplate redisTemplate;
+
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Long addCoupon(CouponAddRequest couponAddRequest) {
 
         // todo 针对不同的优惠券，要做不同的权限校验，但是因为是初期的版本，就先这样
@@ -114,7 +120,11 @@ public class CouponServiceImpl extends ServiceImpl<CouponMapper, Coupon>
         if (!result) {
             throw new BusinessException(ErrorCode.OPERATION_ERROR, "系统错误，优惠券创建失败");
         }
-        return coupon.getId();
+        Long couponId = coupon.getId();
+        // 还需要存储一下redis。
+        String stockKey = "coupon:stock:" + couponId;
+        redisTemplate.opsForValue().set(stockKey, stock);
+        return couponId;
     }
 
     @Override
