@@ -84,6 +84,7 @@ public class ShopRatingController {
         event.setRatingId(id);
         event.setAction("SUBMIT");
         event.setEventTime(LocalDateTime.now());
+        event.setRetryCount(0);
 
         shopRatingEventProducer.sendShopRatingChangedEvent(event);
 

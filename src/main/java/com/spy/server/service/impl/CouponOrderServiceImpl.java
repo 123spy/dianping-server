@@ -310,6 +310,7 @@ public class CouponOrderServiceImpl extends ServiceImpl<CouponOrderMapper, Coupo
             event.setCouponId(couponId);
             event.setUserId(loginUser.getId());
             event.setEventTime(LocalDateTime.now());
+            event.setRetryCount(0);
 
             couponOrderEventProducer.sendCouponOrderSuccessEvent(event);
         } else if (res == 1) {

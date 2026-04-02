@@ -239,3 +239,16 @@ CREATE TABLE user_coupon (
 -- 执行完本文件建表后，再执行 server/sql/init_data.sql 导入初始化与压测数据。
 -- =========================
 
+-- =========================
+-- 10. 消息幂等性表
+-- =========================
+CREATE TABLE mq_consume_record
+(
+    id         BIGINT PRIMARY KEY AUTO_INCREMENT,
+    msgId      VARCHAR(64) NOT NULL,
+    bizType    VARCHAR(32) NOT NULL,
+    status     TINYINT     NOT NULL,
+    createTime DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    updateTime DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    UNIQUE KEY uk_msg_id_biz_type (msgId, bizType)
+);

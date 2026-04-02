@@ -26,7 +26,9 @@ public class CouponOrderEventProducer {
                 CouponOrderMqConfig.COUPON_ORDER_ROUTING_KEY,
                 event,
                 message -> {
+                    // 设置消息持久化
                     message.getMessageProperties().setDeliveryMode(MessageDeliveryMode.PERSISTENT);
+                    // 设置消息的id
                     message.getMessageProperties().setMessageId(correlationData.getId());
                     return message;
                     },
@@ -34,5 +36,25 @@ public class CouponOrderEventProducer {
         );
 
         log.info("发送抢购完成信息成功, couponId={}, userId={}", event.getCouponId(), event.getUserId());
+    }
+
+    public void sendRetryQueue(CouponOrderEvent newEvent) {
+        CorrelationData correlationData = new CorrelationData(UUID.randomUUID().toString());
+
+        rabbitTemplate.convertAndSend(
+                CouponOrderMqConfig.COUPON_ORDER_RETRY_EXCHANGE,
+                CouponOrderMqConfig.COUPON_ORDER_RETRY_ROUTING_KEY,
+                newEvent,
+                message -> {
+                    // 设置消息持久化
+                    message.getMessageProperties().setDeliveryMode(MessageDeliveryMode.PERSISTENT);
+                    // 设置消息的id
+                    message.getMessageProperties().setMessageId(correlationData.getId());
+                    return message;
+                },
+                correlationData
+        );
+
+        log.info("发送重试信息成功, couponId={}, userId={}", newEvent.getCouponId(), newEvent.getUserId());
     }
 }

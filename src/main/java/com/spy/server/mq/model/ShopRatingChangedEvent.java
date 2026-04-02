@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
-public class ShopRatingChangedEvent implements Serializable {
+public class ShopRatingChangedEvent extends Event implements Serializable {
     private Long shopId;
 
     private Long ratingId;

@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
-public class CouponOrderEvent implements Serializable {
+public class CouponOrderEvent extends Event implements Serializable {
 
     private Long couponId;
 
