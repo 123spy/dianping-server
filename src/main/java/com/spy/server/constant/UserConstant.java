@@ -25,4 +25,9 @@ public interface UserConstant {
      * 管理员角色
      */
     String ADMIN_ROLE = "admin";
+
+    /**
+     * 店铺管理者角色
+     */
+    String MANAGER_ROLE = "manager";
 }

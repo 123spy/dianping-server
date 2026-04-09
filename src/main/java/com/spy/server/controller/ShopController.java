@@ -14,29 +14,44 @@ import com.spy.server.exception.BusinessException;
 import com.spy.server.model.domain.Shop;
 import com.spy.server.model.domain.User;
 import com.spy.server.model.dto.shop.ShopAddRequest;
+import com.spy.server.model.dto.shop.ShopNearQueryRequest;
 import com.spy.server.model.dto.shop.ShopQueryRequest;
 import com.spy.server.model.dto.shop.ShopUpdateRequest;
 import com.spy.server.model.vo.ShopVO;
 import com.spy.server.service.ShopService;
 import com.spy.server.service.UserService;
 import com.spy.server.utils.ResultUtil;
+import com.spy.server.utils.ShopGeoRedisKeyUtil;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.geo.Circle;
+import org.springframework.data.geo.GeoResult;
+import org.springframework.data.geo.GeoResults;
+import org.springframework.data.geo.Point;
+import org.springframework.data.geo.Distance;
+import org.springframework.data.redis.connection.RedisGeoCommands;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/shop")
@@ -55,20 +70,69 @@ public class ShopController {
 
     @Resource
     private RedisTemplate redisTemplate;
+
     @Autowired
     private UserService userService;
 
     private final ConcurrentHashMap<String, Object> lockHotMap = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, Object> lockVoMap = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, Object> lockMap = new ConcurrentHashMap<>();
+
+    @PostMapping("/near")
+    public BaseResponse<List<ShopVO>> getNearShop(@RequestBody ShopNearQueryRequest shopNearQueryRequest,
+                                                  HttpServletRequest request) {
+        BigDecimal longitude = shopNearQueryRequest.getLongitude();
+        BigDecimal latitude = shopNearQueryRequest.getLatitude();
+        Long distance = shopNearQueryRequest.getDistance();
+
+        if (longitude == null || latitude == null || distance == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "Invalid location parameters");
+        }
+
+        GeoResults<RedisGeoCommands.GeoLocation<String>> results = stringRedisTemplate.opsForGeo().search(
+                ShopGeoRedisKeyUtil.SHOP_GEO_KEY,
+                new Circle(
+                        new Point(longitude.doubleValue(), latitude.doubleValue()),
+                        new Distance(distance)
+                )
+        );
+
+        if (results == null || results.getContent() == null || results.getContent().isEmpty()) {
+            return ResultUtil.success(new ArrayList<>());
+        }
+
+        List<Long> shopIdList = new ArrayList<>();
+        for (GeoResult<RedisGeoCommands.GeoLocation<String>> result : results.getContent()) {
+            String shopIdStr = result.getContent().getName();
+            if (shopIdStr != null) {
+                shopIdList.add(Long.valueOf(shopIdStr));
+            }
+        }
+
+        List<Shop> shopList = shopService.listByIds(shopIdList);
+        if (shopList == null || shopList.isEmpty()) {
+            return ResultUtil.success(new ArrayList<>());
+        }
+
+        Map<Long, Shop> shopMap = shopList.stream().collect(Collectors.toMap(Shop::getId, shop -> shop));
+        List<ShopVO> shopVOList = new ArrayList<>();
+        for (Long shopId : shopIdList) {
+            Shop shop = shopMap.get(shopId);
+            if (shop != null) {
+                shopVOList.add(shopService.getShopVO(shop, request));
+            }
+        }
+
+        return ResultUtil.success(shopVOList);
+    }
 
     @GetMapping("/hot/rating")
     @Transactional(rollbackFor = Exception.class)
     public BaseResponse<List<ShopVO>> getHotRatingShop(HttpServletRequest request) {
-
         String key = SHOP_RATING_RANKING_KEY;
-        Set<ZSetOperations.TypedTuple<Object>> top10 =
-                redisTemplate.opsForZSet().reverseRangeWithScores(key, 0, 9);
+        Set<ZSetOperations.TypedTuple<Object>> top10 = redisTemplate.opsForZSet().reverseRangeWithScores(key, 0, 9);
 
-        if (top10 != null && top10.size() != 0) {
+        if (top10 != null && !top10.isEmpty()) {
             return ResultUtil.success(buildHotRatingShopVOList(top10, request));
         }
 
@@ -76,9 +140,8 @@ public class ShopController {
 
         synchronized (lock) {
             try {
-                top10 =
-                        redisTemplate.opsForZSet().reverseRangeWithScores(key, 0, 9);
-                if (top10 != null && top10.size() != 0) {
+                top10 = redisTemplate.opsForZSet().reverseRangeWithScores(key, 0, 9);
+                if (top10 != null && !top10.isEmpty()) {
                     return ResultUtil.success(buildHotRatingShopVOList(top10, request));
                 }
 
@@ -118,8 +181,10 @@ public class ShopController {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         Long id = shopService.addShop(shopAddRequest);
+        Shop shop = shopService.getById(id);
+        refreshShopGeo(shop);
         clearShopListCache();
-        refreshShopRatingRanking(shopService.getById(id));
+        refreshShopRatingRanking(shop);
         return ResultUtil.success(id);
     }
 
@@ -130,11 +195,16 @@ public class ShopController {
         if (deleteRequest == null || deleteRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
+
+        Shop oldShop = shopService.getById(deleteRequest.getId());
         boolean result = shopService.removeById(deleteRequest.getId());
         if (!result) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
 
+        if (oldShop != null) {
+            removeShopGeo(oldShop.getId());
+        }
         clearShopDetailCache(deleteRequest.getId());
         clearShopListCache();
         removeShopRatingRanking(deleteRequest.getId());
@@ -154,9 +224,11 @@ public class ShopController {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
 
+        Shop shop = shopService.getById(shopUpdateRequest.getId());
+        refreshShopGeo(shop);
         clearShopDetailCache(shopUpdateRequest.getId());
         clearShopListCache();
-        refreshShopRatingRanking(shopService.getById(shopUpdateRequest.getId()));
+        refreshShopRatingRanking(shop);
 
         return ResultUtil.success(true);
     }
@@ -173,8 +245,6 @@ public class ShopController {
         }
         return ResultUtil.success(shop);
     }
-
-    private final ConcurrentHashMap<String, Object> lockVoMap = new ConcurrentHashMap<>();
 
     @GetMapping("/get/vo")
     public BaseResponse<ShopVO> getShopVOById(long id, HttpServletRequest request) {
@@ -232,14 +302,12 @@ public class ShopController {
         }
         int current = shopQueryRequest.getCurrent();
         int pageSize = shopQueryRequest.getPageSize();
-        if(pageSize > 100) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "鍒嗛〉鏌ヨ杩囧ぇ");
+        if (pageSize > 100) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "Page size is too large");
         }
         Page<Shop> shopPage = shopService.page(new Page<>(current, pageSize), shopService.getQueryWrapper(shopQueryRequest));
         return ResultUtil.success(shopPage);
     }
-
-    private final ConcurrentHashMap<String, Object> lockMap = new ConcurrentHashMap<>();
 
     @PostMapping("/list/page/vo")
     public BaseResponse<Page<ShopVO>> listShopVOByPage(@RequestBody ShopQueryRequest shopQueryRequest,
@@ -268,7 +336,6 @@ public class ShopController {
                 }
 
                 Page<ShopVO> result = shopService.listShopVOByPage(shopQueryRequest, request);
-
                 if (result == null) {
                     Page<ShopVO> emptyPage = new Page<>();
                     emptyPage.setRecords(Collections.emptyList());
@@ -278,7 +345,6 @@ public class ShopController {
 
                 int randomTtl = ThreadLocalRandom.current().nextInt(60);
                 redisTemplate.opsForValue().set(key, result, 60 + randomTtl, TimeUnit.SECONDS);
-
                 return ResultUtil.success(result);
             } finally {
                 lockMap.remove(key, lock);
@@ -334,5 +400,27 @@ public class ShopController {
         } else {
             redisTemplate.opsForZSet().remove(SHOP_RATING_RANKING_KEY, shop.getId());
         }
+    }
+
+    private void refreshShopGeo(Shop shop) {
+        if (shop == null || shop.getId() == null) {
+            return;
+        }
+        if (shop.getLongitude() == null || shop.getLatitude() == null) {
+            removeShopGeo(shop.getId());
+            return;
+        }
+        stringRedisTemplate.opsForGeo().add(
+                ShopGeoRedisKeyUtil.SHOP_GEO_KEY,
+                new Point(shop.getLongitude().doubleValue(), shop.getLatitude().doubleValue()),
+                shop.getId().toString()
+        );
+    }
+
+    private void removeShopGeo(Long shopId) {
+        if (shopId == null || shopId <= 0) {
+            return;
+        }
+        stringRedisTemplate.opsForGeo().remove(ShopGeoRedisKeyUtil.SHOP_GEO_KEY, shopId.toString());
     }
 }

@@ -13,8 +13,8 @@ DROP TABLE IF EXISTS user;
 CREATE TABLE user (
                       id BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键 id',
                       userName VARCHAR(64) NOT NULL DEFAULT '' COMMENT '用户名',
-                      userAccount VARCHAR(64) NOT NULL COMMENT '用户账号',
-                      userPassword VARCHAR(255) NOT NULL COMMENT '用户密码（加密存储）',
+                      userAccount  VARCHAR(64)  NULL COMMENT '用户账号',
+                      userPassword VARCHAR(255) NULL COMMENT '用户密码（加密存储）',
                       userPhone VARCHAR(20) DEFAULT NULL COMMENT '用户手机号',
                       avatar VARCHAR(512) DEFAULT NULL COMMENT '用户头像',
                       userProfile VARCHAR(512) DEFAULT NULL COMMENT '用户简介',
@@ -85,6 +85,34 @@ CREATE TABLE shop (
                       KEY idx_favoriteCount (favoriteCount),
                       KEY idx_name (name)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='店铺表';
+
+
+-- =========================
+-- 3.1 店铺媒体表
+-- =========================
+DROP TABLE IF EXISTS shop_media;
+CREATE TABLE shop_media
+(
+    id           BIGINT        NOT NULL AUTO_INCREMENT COMMENT '主键 id',
+    shopId       BIGINT        NOT NULL COMMENT '店铺 id',
+    type         TINYINT       NOT NULL COMMENT '媒体类型：1-图片 2-视频',
+    url          VARCHAR(1024) NOT NULL COMMENT '媒体地址',
+    sortNo       INT           NOT NULL DEFAULT 0 COMMENT '排序号',
+    isCover      TINYINT       NOT NULL DEFAULT 0 COMMENT '是否封面：0-否 1-是',
+    fileName     VARCHAR(255)           DEFAULT NULL COMMENT '原始文件名',
+    contentType  VARCHAR(128)           DEFAULT NULL COMMENT '文件类型',
+    fileSize     BIGINT                 DEFAULT NULL COMMENT '文件大小（字节）',
+    createUserId BIGINT        NOT NULL COMMENT '上传人 id',
+    createTime   DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    updateTime   DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    isDelete     TINYINT       NOT NULL DEFAULT 0 COMMENT '逻辑删除：0-未删 1-已删',
+    PRIMARY KEY (id),
+    KEY idx_shopId (shopId),
+    KEY idx_type (type),
+    KEY idx_sortNo (sortNo),
+    KEY idx_createUserId (createUserId)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4 COMMENT ='店铺媒体表';
 
 
 -- =========================

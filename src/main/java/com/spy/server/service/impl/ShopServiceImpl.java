@@ -12,16 +12,19 @@ import com.spy.server.exception.BusinessException;
 import com.spy.server.model.domain.Category;
 import com.spy.server.model.domain.Favorite;
 import com.spy.server.model.domain.Shop;
+import com.spy.server.model.domain.ShopMedia;
 import com.spy.server.model.domain.User;
 import com.spy.server.model.dto.shop.ShopAddRequest;
 import com.spy.server.model.dto.shop.ShopQueryRequest;
 import com.spy.server.model.dto.shop.ShopUpdateRequest;
 import com.spy.server.model.vo.ShopVO;
+import com.spy.server.model.vo.ShopMediaVO;
 import com.spy.server.model.vo.UserVO;
 import com.spy.server.mapper.ShopMapper;
 import com.spy.server.service.CategoryService;
 import com.spy.server.service.FavoriteService;
 import com.spy.server.service.ShopService;
+import com.spy.server.service.ShopMediaService;
 import com.spy.server.service.UserService;
 import com.spy.server.utils.SqlUtil;
 import jakarta.annotation.Resource;
@@ -32,8 +35,12 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -56,40 +63,13 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop>
     @Resource
     private FavoriteService favoriteService;
 
+    @Resource
+    private ShopMediaService shopMediaService;
+
     @Override
     public ShopVO getShopVO(Shop shop, HttpServletRequest request) {
-        ShopVO shopVO = new ShopVO();
-        if(shop==null){
-            return shopVO;
-        }
-        BeanUtils.copyProperties(shop,shopVO);
-
-        UserVO userVO = userService.getUserVO(userService.getById(shop.getManagerId()));
-        shopVO.setUserVO(userVO);
-
-        String tags = shop.getTags();
-        if (StringUtils.isBlank(tags)) {
-            shopVO.setTags(new ArrayList<>());
-        } else {
-            try {
-                List list = gson.fromJson(tags, List.class);
-                shopVO.setTags(list == null ? new ArrayList<>() : list);
-            } catch (Exception e) {
-                shopVO.setTags(new ArrayList<>());
-            }
-        }
-
-        // 获取一下当前登录用户，并检查是否收藏过
-        User loginUser = userService.getLoginUserAllowNull(request);
-        if(loginUser != null) {
-            QueryWrapper<Favorite> favoriteQueryWrapper = new QueryWrapper<>();
-            favoriteQueryWrapper.eq("userId", loginUser.getId());
-            favoriteQueryWrapper.eq("shopId", shop.getId());
-            long count = favoriteService.count(favoriteQueryWrapper);
-            shopVO.setIsFavorite(count > 0);
-        } else {
-            shopVO.setIsFavorite(false);
-        }
+        ShopVO shopVO = buildBaseShopVO(shop, request);
+        fillShopMedia(shopVO, shopMediaService.listByShopId(shop.getId()));
         return shopVO;
     }
 
@@ -320,9 +300,13 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop>
         if (CollectionUtils.isEmpty(records)) {
             return new ArrayList<>();
         }
-        List<ShopVO> shopVOList = records.stream().map(shop -> {
-            return getShopVO(shop, request);
-        }).collect(Collectors.toList());
+        List<ShopVO> shopVOList = records.stream().map(shop -> buildBaseShopVO(shop, request)).collect(Collectors.toList());
+        Map<Long, List<ShopMedia>> shopMediaMap = shopMediaService.listByShopIds(
+                records.stream().map(Shop::getId).collect(Collectors.toList())
+        ).stream().collect(Collectors.groupingBy(ShopMedia::getShopId));
+        for (ShopVO shopVO : shopVOList) {
+            fillShopMedia(shopVO, shopMediaMap.getOrDefault(shopVO.getId(), Collections.emptyList()));
+        }
         return shopVOList;
     }
 
@@ -335,5 +319,65 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop>
         List<ShopVO> shopVoList = this.getShopVO(shopPage.getRecords(), request);
         shopVOPage.setRecords(shopVoList);
         return shopVOPage;
+    }
+
+    private ShopVO buildBaseShopVO(Shop shop, HttpServletRequest request) {
+        ShopVO shopVO = new ShopVO();
+        if (shop == null) {
+            return shopVO;
+        }
+        BeanUtils.copyProperties(shop, shopVO);
+
+        UserVO userVO = userService.getUserVO(userService.getById(shop.getManagerId()));
+        shopVO.setUserVO(userVO);
+
+        String tags = shop.getTags();
+        if (StringUtils.isBlank(tags)) {
+            shopVO.setTags(new ArrayList<>());
+        } else {
+            try {
+                List list = gson.fromJson(tags, List.class);
+                shopVO.setTags(list == null ? new ArrayList<>() : list);
+            } catch (Exception e) {
+                shopVO.setTags(new ArrayList<>());
+            }
+        }
+
+        User loginUser = userService.getLoginUserAllowNull(request);
+        if (loginUser != null) {
+            QueryWrapper<Favorite> favoriteQueryWrapper = new QueryWrapper<>();
+            favoriteQueryWrapper.eq("userId", loginUser.getId());
+            favoriteQueryWrapper.eq("shopId", shop.getId());
+            long count = favoriteService.count(favoriteQueryWrapper);
+            shopVO.setIsFavorite(count > 0);
+        } else {
+            shopVO.setIsFavorite(false);
+        }
+        return shopVO;
+    }
+
+    private void fillShopMedia(ShopVO shopVO, List<ShopMedia> shopMediaList) {
+        if (shopVO == null) {
+            return;
+        }
+        List<ShopMedia> sortedMediaList = shopMediaList == null ? new ArrayList<>() : new ArrayList<>(shopMediaList);
+        sortedMediaList.sort(Comparator
+                .comparing((ShopMedia item) -> item.getIsCover() != null && item.getIsCover() == 1 ? 0 : 1)
+                .thenComparing(item -> item.getType() == null ? Integer.MAX_VALUE : item.getType())
+                .thenComparing(item -> item.getSortNo() == null ? Integer.MAX_VALUE : item.getSortNo())
+                .thenComparing(item -> item.getId() == null ? Long.MAX_VALUE : item.getId()));
+        List<ShopMediaVO> shopMediaVOList = shopMediaService.getShopMediaVOList(sortedMediaList);
+        shopVO.setMediaList(shopMediaVOList);
+
+        String coverImage = null;
+        for (ShopMediaVO shopMediaVO : shopMediaVOList) {
+            if (shopMediaVO.getType() != null && shopMediaVO.getType() == 1) {
+                coverImage = shopMediaVO.getUrl();
+                if (shopMediaVO.getIsCover() != null && shopMediaVO.getIsCover() == 1) {
+                    break;
+                }
+            }
+        }
+        shopVO.setCoverImage(coverImage);
     }
 }

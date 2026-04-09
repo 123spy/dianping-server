@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.spy.server.common.ErrorCode;
 import com.spy.server.exception.BusinessException;
-import com.spy.server.mq.mapper.MqConsumeRecordMapper;
+import com.spy.server.mapper.MqConsumeRecordMapper;
 import com.spy.server.mq.model.MqConsumeRecord;
 import com.spy.server.mq.service.MqConsumeRecordService;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +13,6 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Slf4j
 @Service

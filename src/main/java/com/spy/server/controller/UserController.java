@@ -5,18 +5,31 @@ import com.spy.server.annotation.AuthCheck;
 import com.spy.server.common.BaseResponse;
 import com.spy.server.common.DeleteRequest;
 import com.spy.server.common.ErrorCode;
-import com.spy.server.service.UserService;
-import com.spy.server.utils.ResultUtil;
 import com.spy.server.constant.UserConstant;
 import com.spy.server.exception.BusinessException;
 import com.spy.server.model.domain.User;
-import com.spy.server.model.dto.user.*;
+import com.spy.server.model.dto.user.UserAddRequest;
+import com.spy.server.model.dto.user.UserLoginByPhoneRequest;
+import com.spy.server.model.dto.user.UserLoginRequest;
+import com.spy.server.model.dto.user.UserQueryRequest;
+import com.spy.server.model.dto.user.UserRegisterRequest;
+import com.spy.server.model.dto.user.UserUpdateMyInfoRequest;
+import com.spy.server.model.dto.user.UserUpdateRequest;
 import com.spy.server.model.vo.UserVO;
+import com.spy.server.service.UserService;
+import com.spy.server.utils.AccountUtil;
+import com.spy.server.utils.ResultUtil;
+import com.spy.server.utils.SmsRedisKeyUtil;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/user")
@@ -26,9 +39,11 @@ public class UserController {
     @Resource
     private UserService userService;
 
+    @Resource
+    private RedisTemplate<String, String> redisTemplate;
+
     @PostMapping("/register")
     public BaseResponse<Long> userRegister(@RequestBody UserRegisterRequest userRegisterRequest, HttpServletRequest request) {
-        // 校验
         if (userRegisterRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
@@ -44,7 +59,6 @@ public class UserController {
 
     @PostMapping("/login")
     public BaseResponse<UserVO> userLogin(@RequestBody UserLoginRequest userLoginRequest, HttpServletRequest request) {
-        // 校验
         if (userLoginRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
@@ -56,6 +70,33 @@ public class UserController {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         User user = userService.userLogin(userAccount, userPassword, request);
+        UserVO userVO = userService.getUserVO(user);
+        return ResultUtil.success(userVO);
+    }
+
+    @PostMapping("/login/phone")
+    public BaseResponse<UserVO> userLoginByPhone(@RequestBody UserLoginByPhoneRequest userLoginByPhoneRequest, HttpServletRequest request) {
+        if (userLoginByPhoneRequest == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+
+        String userPhone = userLoginByPhoneRequest.getUserPhone();
+        String code = userLoginByPhoneRequest.getCode();
+        if (StringUtils.isAnyBlank(userPhone, code) || !AccountUtil.checkUserPhone(userPhone)) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "Invalid phone number or verification code");
+        }
+
+        String codeKey = SmsRedisKeyUtil.loginCodeKey(userPhone);
+        String codeInRedis = redisTemplate.opsForValue().get(codeKey);
+        if (codeInRedis == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "Verification code has expired");
+        }
+        if (!codeInRedis.equals(code)) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "Verification code is incorrect");
+        }
+
+        User user = userService.userLoginByPhone(userPhone, request);
+        redisTemplate.delete(codeKey);
         UserVO userVO = userService.getUserVO(user);
         return ResultUtil.success(userVO);
     }
@@ -78,7 +119,6 @@ public class UserController {
     @PostMapping("/add")
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     public BaseResponse<Long> addUser(@RequestBody UserAddRequest userAddRequest) {
-        // 校验
         if (userAddRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
@@ -89,11 +129,9 @@ public class UserController {
     @PostMapping("/delete")
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     public BaseResponse<Boolean> deleteUser(@RequestBody DeleteRequest deleteRequest) {
-        // 1. 校验
         if (deleteRequest == null || deleteRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        // 2. 删除
         boolean result = userService.removeById(deleteRequest.getId());
         if (!result) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -112,7 +150,6 @@ public class UserController {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         Boolean result = userService.updateUser(userUpdateRequest);
-
         return ResultUtil.success(result);
     }
 
@@ -162,7 +199,6 @@ public class UserController {
         return ResultUtil.success(userVOPage);
     }
 
-    // 用户修改自己的信息
     @PostMapping("/edit")
     public BaseResponse<Boolean> editUserInfo(@RequestBody UserUpdateMyInfoRequest userUpdateMyInfoRequest, HttpServletRequest request) {
         if (userUpdateMyInfoRequest == null) {
@@ -173,7 +209,4 @@ public class UserController {
         Boolean result = userService.updateUserMyInfo(userUpdateMyInfoRequest);
         return ResultUtil.success(result);
     }
-
-    // todo 忘记密码，重置密码
-
 }

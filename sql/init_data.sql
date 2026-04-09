@@ -10,22 +10,36 @@ SET NAMES utf8mb4;
 -- =========================
 INSERT INTO user
 (userName, userAccount, userPassword, userPhone, avatar, userProfile, userRole, status)
-VALUES
-    ('张三', 'zhangsan', '123456', '13800000001', 'https://example.com/avatar1.jpg', '喜欢探店和火锅，美食爱好者', 'user', 0),
-    ('李四', 'lisi', '123456', '13800000002', 'https://example.com/avatar2.jpg', '奶茶爱好者，甜品控', 'user', 0),
-    ('王店长', 'manager01', '123456', '13800000003', 'https://example.com/avatar3.jpg', '负责店铺运营，10年餐饮经验', 'manager', 0),
-    ('赵店长', 'manager02', '123456', '13800000004', 'https://example.com/avatar4.jpg', '擅长活动策划和营销', 'manager', 0),
-    ('管理员', 'admin', '123456', '13800000005', 'https://example.com/avatar5.jpg', '系统管理员', 'admin', 0),
-    ('王小明', 'wangxiaoming', '123456', '13800000006', 'https://example.com/avatar6.jpg', '大学生，喜欢尝试新店', 'user', 0),
-    ('陈小红', 'chenxiaohong', '123456', '13800000007', 'https://example.com/avatar7.jpg', '美食博主，经常分享探店经历', 'user', 0),
-    ('刘伟', 'liuwei', '123456', '13800000008', 'https://example.com/avatar8.jpg', '上班族，喜欢火锅和烧烤', 'user', 0),
-    ('赵丽', 'zhaoli', '123456', '13800000009', 'https://example.com/avatar9.jpg', '下午茶爱好者，喜欢咖啡甜品', 'user', 0),
-    ('孙鹏', 'sunpeng', '123456', '13800000010', 'https://example.com/avatar10.jpg', '健身达人，喜欢健康轻食', 'user', 0),
-    ('周敏', 'zhoumin', '123456', '13800000011', 'https://example.com/avatar11.jpg', '宝妈，喜欢带孩子吃美食', 'user', 0),
-    ('吴刚', 'wugang', '123456', '13800000012', 'https://example.com/avatar12.jpg', '夜宵爱好者，烧烤达人', 'user', 0),
-    ('郑洁', 'zhengjie', '123456', '13800000013', 'https://example.com/avatar13.jpg', '甜品控，喜欢拍照打卡', 'user', 0),
-    ('林涛', 'lintao', '123456', '13800000014', 'https://example.com/avatar14.jpg', '咖啡爱好者，手冲达人', 'user', 0),
-    ('郭静', 'guojing', '123456', '13800000015', 'https://example.com/avatar15.jpg', '美食评论家，口味挑剔', 'user', 0);
+VALUES ('张三', 'zhangsan', '123456', '13800000001', 'https://randomuser.me/api/portraits/men/32.jpg',
+        '喜欢探店和火锅，美食爱好者', 'user', 0),
+       ('李四', 'lisi', '123456', '13800000002', 'https://randomuser.me/api/portraits/women/44.jpg',
+        '奶茶爱好者，甜品控', 'user', 0),
+       ('王店长', 'manager01', '123456', '13800000003', 'https://randomuser.me/api/portraits/men/45.jpg',
+        '负责店铺运营，10年餐饮经验', 'manager', 0),
+       ('赵店长', 'manager02', '123456', '13800000004', 'https://randomuser.me/api/portraits/women/46.jpg',
+        '擅长活动策划和营销', 'manager', 0),
+       ('管理员', 'admin', '123456', '13800000005', 'https://randomuser.me/api/portraits/men/51.jpg', '系统管理员',
+        'admin', 0),
+       ('王小明', 'wangxiaoming', '123456', '13800000006', 'https://randomuser.me/api/portraits/men/52.jpg',
+        '大学生，喜欢尝试新店', 'user', 0),
+       ('陈小红', 'chenxiaohong', '123456', '13800000007', 'https://randomuser.me/api/portraits/women/53.jpg',
+        '美食博主，经常分享探店经历', 'user', 0),
+       ('刘伟', 'liuwei', '123456', '13800000008', 'https://randomuser.me/api/portraits/men/54.jpg',
+        '上班族，喜欢火锅和烧烤', 'user', 0),
+       ('赵丽', 'zhaoli', '123456', '13800000009', 'https://randomuser.me/api/portraits/women/55.jpg',
+        '下午茶爱好者，喜欢咖啡甜品', 'user', 0),
+       ('孙鹏', 'sunpeng', '123456', '13800000010', 'https://randomuser.me/api/portraits/men/56.jpg',
+        '健身达人，喜欢健康轻食', 'user', 0),
+       ('周敏', 'zhoumin', '123456', '13800000011', 'https://randomuser.me/api/portraits/women/57.jpg',
+        '宝妈，喜欢带孩子吃美食', 'user', 0),
+       ('吴刚', 'wugang', '123456', '13800000012', 'https://randomuser.me/api/portraits/men/58.jpg',
+        '夜宵爱好者，烧烤达人', 'user', 0),
+       ('郑洁', 'zhengjie', '123456', '13800000013', 'https://randomuser.me/api/portraits/women/59.jpg',
+        '甜品控，喜欢拍照打卡', 'user', 0),
+       ('林涛', 'lintao', '123456', '13800000014', 'https://randomuser.me/api/portraits/men/60.jpg',
+        '咖啡爱好者，手冲达人', 'user', 0),
+       ('郭静', 'guojing', '123456', '13800000015', 'https://randomuser.me/api/portraits/women/61.jpg',
+        '美食评论家，口味挑剔', 'user', 0);
 
 
 -- =========================
@@ -113,9 +127,60 @@ VALUES
      121.513701, 31.270416, '上海市浦东新区陆家嘴环路', '上海',
      1, 1, 4.40, 4, 4, 2, 120);
 
+-- =========================
+-- 13. 初始化店铺媒体数据
+-- =========================
+INSERT INTO shop_media
+(shopId, type, url, sortNo, isCover, fileName, contentType, fileSize, createUserId)
+VALUES (1, 1, 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1400&q=80', 0, 1,
+        'hotpot-cover.jpg', 'image/jpeg', 512000, 3),
+       (1, 1, 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1400&q=80', 1, 0,
+        'hotpot-table.jpg', 'image/jpeg', 486000, 3),
+       (1, 1, 'https://images.unsplash.com/photo-1526318896980-cf78c088247c?auto=format&fit=crop&w=1400&q=80', 2, 0,
+        'hotpot-ingredient.jpg', 'image/jpeg', 471000, 3),
+       (1, 2, 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4', 0, 0, 'hotpot-ambience.mp4',
+        'video/mp4', 1120000, 3),
+
+       (3, 1, 'https://images.unsplash.com/photo-1558857563-b371033873b8?auto=format&fit=crop&w=1400&q=80', 0, 1,
+        'milk-tea-cover.jpg', 'image/jpeg', 402000, 3),
+       (3, 1, 'https://images.unsplash.com/photo-1525385133512-2f3bdd039054?auto=format&fit=crop&w=1400&q=80', 1, 0,
+        'milk-tea-fruit.jpg', 'image/jpeg', 388000, 3),
+       (3, 1, 'https://images.unsplash.com/photo-1515823064-d6e0c04616a7?auto=format&fit=crop&w=1400&q=80', 2, 0,
+        'milk-tea-counter.jpg', 'image/jpeg', 415000, 3),
+
+       (7, 1, 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=1400&q=80', 0, 1,
+        'japanese-cover.jpg', 'image/jpeg', 498000, 4),
+       (7, 1, 'https://images.unsplash.com/photo-1563612116625-3012372fccce?auto=format&fit=crop&w=1400&q=80', 1, 0,
+        'japanese-sushi.jpg', 'image/jpeg', 463000, 4),
+       (7, 1, 'https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=1400&q=80', 2, 0,
+        'japanese-bar.jpg', 'image/jpeg', 441000, 4),
+       (7, 2, 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.webm', 0, 0, 'japanese-room.webm',
+        'video/webm', 980000, 4),
+
+       (11, 1, 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=1400&q=80', 0, 1,
+        'heytea-cover.jpg', 'image/jpeg', 395000, 3),
+       (11, 1, 'https://images.unsplash.com/photo-1499636136210-6f4ee915583e?auto=format&fit=crop&w=1400&q=80', 1, 0,
+        'heytea-cup.jpg', 'image/jpeg', 406000, 3),
+       (11, 1, 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=1400&q=80', 2, 0,
+        'heytea-space.jpg', 'image/jpeg', 429000, 3),
+
+       (13, 1, 'https://images.unsplash.com/photo-1541544181051-e46607c0b5f3?auto=format&fit=crop&w=1400&q=80', 0, 1,
+        'haidilao-cover.jpg', 'image/jpeg', 530000, 4),
+       (13, 1, 'https://images.unsplash.com/photo-1514517220017-8ce97a34a7b6?auto=format&fit=crop&w=1400&q=80', 1, 0,
+        'haidilao-night.jpg', 'image/jpeg', 487000, 4),
+       (13, 1, 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1400&q=80', 2, 0,
+        'haidilao-table.jpg', 'image/jpeg', 452000, 4),
+       (13, 2, 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4', 0, 0, 'haidilao-scene.mp4',
+        'video/mp4', 1120000, 4),
+
+       (14, 1, 'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fit=crop&w=1400&q=80', 0, 1,
+        'naixue-cover.jpg', 'image/jpeg', 401000, 3),
+       (14, 1, 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=1400&q=80', 1, 0,
+        'naixue-bread.jpg', 'image/jpeg', 379000, 3);
+
 
 -- =========================
--- 13. 初始化评论数据（生成更多评论）
+-- 14. 初始化评论数据（生成更多评论）
 -- =========================
 INSERT INTO comment
 (userId, shopId, content, likeCount, status)
@@ -225,7 +290,7 @@ VALUES
 
 
 -- =========================
--- 14. 初始化评分数据（生成更多评分）
+-- 15. 初始化评分数据（生成更多评分）
 -- =========================
 INSERT INTO shop_rating
 (userId, shopId, score)
@@ -334,7 +399,7 @@ VALUES
 
 
 -- =========================
--- 15. 初始化收藏数据（生成更多收藏）
+-- 16. 初始化收藏数据（生成更多收藏）
 -- =========================
 INSERT INTO favorite
 (userId, shopId)
@@ -388,7 +453,7 @@ VALUES
 
 
 -- =========================
--- 16. 初始化优惠券数据
+-- 17. 初始化优惠券数据
 -- =========================
 INSERT INTO coupon
 (shopId, title, description, type, price, discountPrice, stock,
@@ -433,7 +498,7 @@ VALUES
 
 
 -- =========================
--- 17. 初始化订单数据
+-- 18. 初始化订单数据
 -- =========================
 INSERT INTO coupon_order
 (orderNo, userId, shopId, couponId, totalAmount, payAmount, payType, status, payTime, cancelTime, finishTime)
@@ -455,7 +520,7 @@ VALUES
     ('ORD202603200015', 1, 13, 11, 0.00, 0.00, 'wechat', 1, '2026-03-23 16:00:00', NULL, NULL);
 
 -- =========================
--- 18. 初始化用户拥有的券数据
+-- 19. 初始化用户拥有的券数据
 -- =========================
 INSERT INTO user_coupon
 (userId, couponId, orderId, code, status, obtainTime, useTime, expireTime)
@@ -476,7 +541,7 @@ VALUES
 
 
 -- =========================
--- 19. 更新店铺统计数据
+-- 20. 更新店铺统计数据
 -- =========================
 UPDATE shop SET avgScore = 4.50, ratingCount = 6, commentCount = 7, favoriteCount = 3 WHERE id = 1;
 UPDATE shop SET avgScore = 4.00, ratingCount = 5, commentCount = 5, favoriteCount = 2 WHERE id = 2;

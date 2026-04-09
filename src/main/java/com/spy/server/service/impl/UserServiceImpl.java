@@ -417,6 +417,30 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         return currentUser;
     }
 
+    @Override
+    public User userLoginByPhone(String userPhone, HttpServletRequest request) {
+        synchronized (userPhone.intern()) {
+            // 查一下当前数据库是否存在这个手机号
+            QueryWrapper<User> wrapper = new QueryWrapper<User>().eq("userPhone", userPhone);
+            User user = this.getOne(wrapper);
+            if (user == null) {
+                // 如果没有这个手机号，就注册一个账号
+                user = new User();
+                user.setUserName(AccountUtil.getRandomUserName());
+                user.setUserPhone(userPhone);
+                this.save(user);
+            }
+            // 记录登陆状态
+            // 3. 用户脱敏
+            User safetyUser = getSafetyUser(user);
+            // 4. 记录用户的登录态
+            request.getSession().setAttribute(USER_LOGIN_STATE, safetyUser);
+            return user;
+        }
+
+    }
+
+
     public User getSafetyUser(User originUser) {
         if (originUser == null) {
             return null;

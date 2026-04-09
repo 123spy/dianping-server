@@ -3,6 +3,8 @@ server:
   servlet:
     context-path: /api
 spring:
+  profiles:
+    active: local
   rabbitmq:
     host: localhost
     port: 5672
@@ -10,7 +12,6 @@ spring:
     password: guest
     publisher-confirm-type: correlated
     publisher-returns: true
-
     template:
       mandatory: true
     listener:
@@ -29,7 +30,11 @@ spring:
     username: root
     password: 123456
   session:
-    timeout: 86400
+    timeout: 30m
+    redis:
+      namespace: spring:session
+      flush-mode: on-save
+      save-mode: on-set-attribute
   mvc:
     pathmatch:
       matching-strategy: ANT_PATH_MATCHER
@@ -47,6 +52,21 @@ springdoc:
     enabled: true
   swagger-ui:
     enabled: true
-
 knife4j:
   enable: true
+cos:
+  client:
+    accessKey: ${TENCENT_ACCESS_KEY:}
+    secretKey: ${TENCENT_SECRET_KEY:}
+    region: ${TENCENT_REGION:}
+    bucket: ${TENCENT_BUCKET:}
+aliyun:
+  sms:
+    access-key-id: ${SMS_ACCESS_KEY_ID:}
+    access-key-secret: ${SMS_ACCESS_KEY_SECRET:}
+    endpoint: dypnsapi.aliyuncs.com
+    sign-name: 速通互联验证码
+    template-code: 100001
+    valid-minutes: 5
+    send-cooldown-seconds: 60
+    max-per-phone-per-day: 20

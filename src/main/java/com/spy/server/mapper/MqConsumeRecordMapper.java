@@ -1,4 +1,4 @@
-package com.spy.server.mq.mapper;
+package com.spy.server.mapper;
 
 import com.spy.server.mq.model.MqConsumeRecord;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;

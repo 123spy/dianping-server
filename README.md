@@ -90,3 +90,27 @@
 - 使用 Redis 对店铺分页列表、详情页、热评榜单进行缓存设计，并通过压测验证缓存优化效果，显著提升接口吞吐与响应速度。
 - 针对优惠券抢购场景，基于 Redis + Lua 实现库存原子校验与一人一单控制，避免高并发下超卖问题。
 - 基于 RabbitMQ 实现抢购后异步落单，补充消息幂等、延迟重试与死信队列机制，提升高并发链路的稳定性与可恢复性。
+
+## 改进方案
+
+短信验证码登录 / Redis 共享登录态
+黑马点评的经典做法是短信登录，并把登录态放到 Redis 做共享 Session。这个仓库目前是账号密码登录，登录态走
+request.getSession()；依赖里也能看到用了 Redis，但没有看到 spring-session 相关依赖。README 里还把“忘记密码、重置密码”列成了未完成事项。
+
+附近商户 / GEO 搜索
+黑马点评的一个代表功能是“附近的商户”，一般用 Redis GEO/GEOHash 做附近店铺查询。这个仓库的 Shop 查询虽然接收了
+longitude、latitude，但实际查询条件主要还是 categoryId / city / name / address / tags
+这些普通筛选，没有把经纬度用于距离检索；控制器里也看不到类似“nearby/near”接口。
+
+用户签到（Bitmap）和 UV 统计（HyperLogLog）
+这两个也是黑马点评课程里很有代表性的 Redis 题：签到通常用 Bitmap，UV 统计通常用 HyperLogLog。当前仓库的控制器、实体和 SQL
+表里都没有看到对应的签到/UV 模块；资源目录下 Lua 也只有秒杀脚本。
+
+关注体系 + 探店博客 + Feed 流
+黑马点评不只是“店铺点评”，它还有一条比较核心的社交链路：关注、共同关注、探店博客、Feed 推送、点赞排行榜。这个仓库当前的后端模块主要是
+comment / favorite / shopRating / couponOrder 这一套，没有看到 blog、follow、feed 相关控制器、实体或表。
+
+“Redis 数据结构展示面”还不够全
+黑马点评课程项目的特点，是会把 Redis 的 String / Hash / Set / Bitmap / HyperLogLog / GEO / List / ZSet / Lua
+都串到业务里。这个仓库目前 Redis 主要集中在：店铺缓存、店铺评分榜 ZSet、秒杀 Lua 原子校验；但像收藏、评论这些模块，更多还是数据库直写，不像黑马点评那样把
+Redis 各种结构充分铺开。

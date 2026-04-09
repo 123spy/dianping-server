@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.spy.server.mq.mapper.MqConsumeRecordMapper">
+<mapper namespace="com.spy.server.mapper.MqConsumeRecordMapper">
 
     <resultMap id="BaseResultMap" type="com.spy.server.mq.model.MqConsumeRecord">
             <id property="id" column="id" />

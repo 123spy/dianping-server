@@ -100,6 +100,16 @@ public class ShopVO {
     private Integer favoriteCount;
 
     /**
+     * 封面图
+     */
+    private String coverImage;
+
+    /**
+     * 店铺媒体列表
+     */
+    private List<ShopMediaVO> mediaList;
+
+    /**
      * 浏览量
      */
     private Integer viewCount;

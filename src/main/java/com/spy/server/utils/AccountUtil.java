@@ -11,6 +11,23 @@ import static com.spy.server.constant.UserConstant.SALT;
 
 public class AccountUtil {
 
+
+    /**
+     * 手机号校验
+     *
+     * @param userPhone
+     * @return
+     */
+    public static boolean checkUserPhone(String userPhone) {
+        if (StringUtils.isBlank(userPhone)) {
+            return false;
+        }
+
+        // 中国大陆手机号正则：11 位数字，首位 1，第二位 3-9
+        String regex = "^1[3-9]\\d{9}$";
+        return userPhone.matches(regex);
+    }
+
     /**
      * 账号校验
      *
