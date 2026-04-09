@@ -284,13 +284,13 @@ public class FileController {
             cosManager.putObject(filepath, file);
             return FileConstant.COS_HOST + filepath;
         } catch (Exception e) {
-            log.error("file upload error, filepath = {}", filepath, e);
+            log.error("文件上传失败：文件路径={}", filepath, e);
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "上传失败");
         } finally {
             if (file != null) {
                 boolean delete = file.delete();
                 if (!delete) {
-                    log.error("temp file delete error, filepath = {}", filepath);
+                    log.error("临时文件删除失败：文件路径={}", filepath);
                 }
             }
         }
@@ -307,7 +307,7 @@ public class FileController {
         try {
             cosManager.deleteObject(key);
         } catch (Exception e) {
-            log.warn("delete cos object failed, key = {}", key, e);
+            log.warn("COS 对象删除失败：对象键={}", key, e);
         }
     }
 }

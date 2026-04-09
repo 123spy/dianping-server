@@ -58,11 +58,11 @@ public class SmsController {
             redisTemplate.opsForValue().set(codeKey, code, ttlSeconds, TimeUnit.SECONDS);
             incrementPhoneDailyCount(phoneDailyKey);
             Long remainSeconds = redisTemplate.getExpire(codeKey, TimeUnit.SECONDS);
-            log.info("SMS code cached in Redis. phone={}, code={}, key={}, ttlSeconds={}, remainSeconds={}",
+            log.info("短信验证码已写入 Redis：手机号={}，验证码={}，缓存键={}，过期秒数={}，剩余秒数={}",
                     phone, code, codeKey, ttlSeconds, remainSeconds);
         } catch (Exception e) {
             redisTemplate.delete(cooldownKey);
-            log.error("SMS send failed. phone={}, code={}, key={}, ttlSeconds={}", phone, code, codeKey, ttlSeconds, e);
+            log.error("短信发送失败：手机号={}，验证码={}，缓存键={}，过期秒数={}", phone, code, codeKey, ttlSeconds, e);
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "Failed to send SMS: " + e.getMessage());
         }
 
@@ -76,7 +76,7 @@ public class SmsController {
             return;
         }
         Long remainSeconds = redisTemplate.getExpire(cooldownKey, TimeUnit.SECONDS);
-        log.info("SMS send cooldown blocked. phone={}, cooldownKey={}, remainSeconds={}", phone, cooldownKey, remainSeconds);
+        log.info("短信发送被冷却限制拦截：手机号={}，冷却键={}，剩余秒数={}", phone, cooldownKey, remainSeconds);
         throw new BusinessException(ErrorCode.PARAMS_ERROR, "Please wait 60 seconds before requesting another code");
     }
 
@@ -88,7 +88,7 @@ public class SmsController {
             return;
         }
         Long remainSeconds = redisTemplate.getExpire(phoneDailyKey, TimeUnit.SECONDS);
-        log.warn("SMS phone daily limit exceeded. phone={}, currentCount={}, maxPerPhonePerDay={}, remainSeconds={}",
+        log.warn("短信发送超过手机号自然日上限：手机号={}，当前次数={}，每日上限={}，剩余秒数={}",
                 phone, currentCount, maxPerPhonePerDay, remainSeconds);
         throw new BusinessException(ErrorCode.PARAMS_ERROR, "This phone number has reached today's SMS limit");
     }

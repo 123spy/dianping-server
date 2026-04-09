@@ -51,6 +51,6 @@ public class FullSync implements CommandLineRunner {
         }
         stringRedisTemplate.opsForValue().set(ShopGeoRedisKeyUtil.SHOP_GEO_LAST_SYNC_KEY, LocalDateTime.now().toString());
 
-        log.info("Shop GEO full sync completed. key={}, syncedCount={}", ShopGeoRedisKeyUtil.SHOP_GEO_KEY, locations.size());
+        log.info("店铺 GEO 全量同步完成：GEO键={}，同步数量={}", ShopGeoRedisKeyUtil.SHOP_GEO_KEY, locations.size());
     }
 }

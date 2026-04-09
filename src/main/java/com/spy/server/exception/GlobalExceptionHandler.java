@@ -16,13 +16,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(BusinessException.class)
     public BaseResponse businessExceptionHandler(BusinessException e) {
-        log.error("businessException: " + e.getMessage(), e);
+        log.error("捕获业务异常：异常编码={}，异常信息={}", e.getCode(), e.getMessage(), e);
         return ResultUtil.error(e.getCode(), e.getMessage());
     }
 
     @ExceptionHandler(RuntimeException.class)
     public BaseResponse runtimeExceptionHandler(RuntimeException e) {
-        log.error("runtimeException", e);
+        log.error("捕获运行时异常：异常类型={}，异常信息={}", e.getClass().getSimpleName(), e.getMessage(), e);
         return ResultUtil.error(ErrorCode.SYSTEM_ERROR, e.getMessage());
     }
 }

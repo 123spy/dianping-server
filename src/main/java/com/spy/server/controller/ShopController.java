@@ -89,15 +89,18 @@ public class ShopController {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "Invalid location parameters");
         }
 
-        GeoResults<RedisGeoCommands.GeoLocation<String>> results = stringRedisTemplate.opsForGeo().search(
+        log.info("开始查询附近店铺：经度={}，纬度={}，距离={}米", longitude, latitude, distance);
+
+        GeoResults<RedisGeoCommands.GeoLocation<String>> results = stringRedisTemplate.opsForGeo().radius(
                 ShopGeoRedisKeyUtil.SHOP_GEO_KEY,
                 new Circle(
                         new Point(longitude.doubleValue(), latitude.doubleValue()),
-                        new Distance(distance)
+                        new Distance(distance, RedisGeoCommands.DistanceUnit.METERS)
                 )
         );
 
         if (results == null || results.getContent() == null || results.getContent().isEmpty()) {
+            log.info("附近店铺查询完成：未查询到符合条件的店铺");
             return ResultUtil.success(new ArrayList<>());
         }
 
@@ -122,6 +125,8 @@ public class ShopController {
                 shopVOList.add(shopService.getShopVO(shop, request));
             }
         }
+
+        log.info("附近店铺查询完成：命中店铺数量={}", shopVOList.size());
 
         return ResultUtil.success(shopVOList);
     }
@@ -185,6 +190,7 @@ public class ShopController {
         refreshShopGeo(shop);
         clearShopListCache();
         refreshShopRatingRanking(shop);
+        log.info("新增店铺成功：店铺ID={}，店铺名称={}", id, shop == null ? null : shop.getName());
         return ResultUtil.success(id);
     }
 
@@ -208,6 +214,7 @@ public class ShopController {
         clearShopDetailCache(deleteRequest.getId());
         clearShopListCache();
         removeShopRatingRanking(deleteRequest.getId());
+        log.info("删除店铺成功：店铺ID={}", deleteRequest.getId());
 
         return ResultUtil.success(true);
     }
@@ -229,6 +236,7 @@ public class ShopController {
         clearShopDetailCache(shopUpdateRequest.getId());
         clearShopListCache();
         refreshShopRatingRanking(shop);
+        log.info("更新店铺成功：店铺ID={}，店铺名称={}", shopUpdateRequest.getId(), shop == null ? null : shop.getName());
 
         return ResultUtil.success(true);
     }

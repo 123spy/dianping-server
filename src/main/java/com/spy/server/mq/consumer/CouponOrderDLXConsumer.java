@@ -35,7 +35,7 @@ public class CouponOrderDLXConsumer {
         Long userId = event.getUserId();
         LocalDateTime eventTime = event.getEventTime();
         int retryCount = event.getRetryCount();
-        log.error("用户抢购，订单创建失败。 couponId={}, userId={}, eventTime={}, retryCount={}", couponId, userId, eventTime, retryCount);
+        log.error("用户抢购订单最终失败：优惠券ID={}，用户ID={}，事件时间={}，重试次数={}", couponId, userId, eventTime, retryCount);
         channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
     }
 }

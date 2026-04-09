@@ -44,7 +44,7 @@ public class IncrementSync {
 
         if (changedShops == null || changedShops.isEmpty()) {
             stringRedisTemplate.opsForValue().set(ShopGeoRedisKeyUtil.SHOP_GEO_LAST_SYNC_KEY, currentSyncTime.toString());
-            log.info("Shop GEO incremental sync finished with no changes. key={}", ShopGeoRedisKeyUtil.SHOP_GEO_KEY);
+            log.info("店铺 GEO 增量同步完成：本次无变更数据，GEO键={}", ShopGeoRedisKeyUtil.SHOP_GEO_KEY);
             return;
         }
 
@@ -71,7 +71,7 @@ public class IncrementSync {
         }
 
         stringRedisTemplate.opsForValue().set(ShopGeoRedisKeyUtil.SHOP_GEO_LAST_SYNC_KEY, currentSyncTime.toString());
-        log.info("Shop GEO incremental sync completed. key={}, changedCount={}, updatedCount={}, removedCount={}",
+        log.info("店铺 GEO 增量同步完成：GEO键={}，变更数量={}，更新数量={}，移除数量={}",
                 ShopGeoRedisKeyUtil.SHOP_GEO_KEY, changedShops.size(), updatedCount, removedCount);
     }
 

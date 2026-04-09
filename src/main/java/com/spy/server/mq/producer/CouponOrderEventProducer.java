@@ -35,7 +35,7 @@ public class CouponOrderEventProducer {
                 correlationData
         );
 
-        log.info("发送抢购完成信息成功, couponId={}, userId={}", event.getCouponId(), event.getUserId());
+        log.info("发送抢购完成消息成功：优惠券ID={}，用户ID={}", event.getCouponId(), event.getUserId());
     }
 
     public void sendRetryQueue(CouponOrderEvent newEvent) {
@@ -55,6 +55,6 @@ public class CouponOrderEventProducer {
                 correlationData
         );
 
-        log.info("发送重试信息成功, couponId={}, userId={}", newEvent.getCouponId(), newEvent.getUserId());
+        log.info("发送重试消息成功：优惠券ID={}，用户ID={}", newEvent.getCouponId(), newEvent.getUserId());
     }
 }

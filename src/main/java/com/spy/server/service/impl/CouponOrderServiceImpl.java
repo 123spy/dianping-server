@@ -385,9 +385,9 @@ public class CouponOrderServiceImpl extends ServiceImpl<CouponOrderMapper, Coupo
             createUserCoupon(loginUser.getId(), couponOrder.getCouponId(), couponOrder.getId());
         } else if (totalAmount.intValue() > 0) {
             try {
-                log.info("{}订单使用{}支付中...", order.getOrderNo(), type);
+                log.info("订单开始支付：订单号={}，支付方式={}", order.getOrderNo(), type);
                 Thread.sleep(3000L);
-                log.info("{}订单使用{}支付完成....", order.getOrderNo(), type);
+                log.info("订单支付完成：订单号={}，支付方式={}", order.getOrderNo(), type);
             } catch (InterruptedException e) {
                 throw new BusinessException(ErrorCode.OPERATION_ERROR, "订单付款失败");
             }
@@ -462,9 +462,9 @@ public class CouponOrderServiceImpl extends ServiceImpl<CouponOrderMapper, Coupo
                 throw new BusinessException(ErrorCode.SYSTEM_ERROR, "取消订单失败");
             }
             try {
-                log.info("{}订单使用{}退款中....", order.getOrderNo(), order.getPayType());
+                log.info("订单开始退款：订单号={}，支付方式={}", order.getOrderNo(), order.getPayType());
                 Thread.sleep(3000L);
-                log.info("{}订单使用{}退款完成...", order.getOrderNo(), order.getPayType());
+                log.info("订单退款完成：订单号={}，支付方式={}", order.getOrderNo(), order.getPayType());
             } catch (InterruptedException e) {
                 throw new BusinessException(ErrorCode.SYSTEM_ERROR, "退款失败");
             }

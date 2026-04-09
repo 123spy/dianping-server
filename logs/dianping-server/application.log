@@ -1,0 +1,357 @@
+2026-04-09 20:20:13.291 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.spy.server.ServerApplication | 内容=Starting ServerApplication using Java 21.0.8 with PID 50020 (D:\poroject\去哪评\server\target\classes started by OUC in D:\poroject\去哪评\server)
+2026-04-09 20:20:13.291 | 级别=DEBUG | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.spy.server.ServerApplication | 内容=Running with Spring Boot v3.3.13, Spring v6.1.21
+2026-04-09 20:20:13.292 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.spy.server.ServerApplication | 内容=The following 1 profile is active: "dev"
+2026-04-09 20:20:14.330 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.d.r.c.RepositoryConfigurationDelegate | 内容=Multiple Spring Data modules found, entering strict repository configuration mode
+2026-04-09 20:20:14.331 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.d.r.c.RepositoryConfigurationDelegate | 内容=Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2026-04-09 20:20:14.344 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.d.r.c.RepositoryConfigurationDelegate | 内容=Finished Spring Data repository scanning in 12 ms. Found 0 Redis repository interfaces.
+2026-04-09 20:20:14.605 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.b.w.e.tomcat.TomcatWebServer | 内容=Tomcat initialized with port 8080 (http)
+2026-04-09 20:20:14.607 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.a.catalina.core.StandardService | 内容=Starting service [Tomcat]
+2026-04-09 20:20:14.608 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.a.catalina.core.StandardEngine | 内容=Starting Servlet engine: [Apache Tomcat/10.1.42]
+2026-04-09 20:20:14.635 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.a.c.c.C.[.[localhost].[/api] | 内容=Initializing Spring embedded WebApplicationContext
+2026-04-09 20:20:14.635 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.b.w.s.c.ServletWebServerApplicationContext | 内容=Root WebApplicationContext: initialization completed in 1340 ms
+2026-04-09 20:20:14.656 | 级别=DEBUG | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.spy.server.config.TraceIdFilter | 内容=Filter 'traceIdFilter' configured for use
+2026-04-09 20:20:15.910 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=c.b.m.e.s.MybatisPlusApplicationContextAware | 内容=Register ApplicationContext instances org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext@25121f7c
+2026-04-09 20:20:16.145 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.b.d.a.OptionalLiveReloadServer | 内容=LiveReload server is running on port 35729
+2026-04-09 20:20:16.197 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.b.w.e.tomcat.TomcatWebServer | 内容=Tomcat started on port 8080 (http) with context path '/api'
+2026-04-09 20:20:16.198 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.a.r.c.CachingConnectionFactory | 内容=Attempting to connect to: [localhost:5672]
+2026-04-09 20:20:16.206 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.a.r.c.CachingConnectionFactory | 内容=Created new connection: rabbitConnectionFactory#2bb8a59c:0/SimpleConnection@5bd19857 [delegate=amqp://guest@127.0.0.1:5672/, localPort=55757]
+2026-04-09 20:20:16.257 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.spy.server.ServerApplication | 内容=Started ServerApplication in 3.189 seconds (process running for 1582.135)
+2026-04-09 20:20:16.259 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=c.s.s.c.ApplicationStartupLogger | 内容=应用启动完成：应用名称=dianping-server，当前环境=dev，端口=8080，上下文路径=/api
+2026-04-09 20:20:16.260 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.zaxxer.hikari.HikariDataSource | 内容=HikariPool-2 - Starting...
+2026-04-09 20:20:16.283 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.zaxxer.hikari.pool.HikariPool | 内容=HikariPool-2 - Added connection com.mysql.cj.jdbc.ConnectionImpl@281f9adf
+2026-04-09 20:20:16.283 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.zaxxer.hikari.HikariDataSource | 内容=HikariPool-2 - Start completed.
+2026-04-09 20:20:16.295 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=scheduling-1 | 类=com.spy.server.job.IncrementSync | 内容=Shop GEO incremental sync finished with no changes. key=shop:geo:all
+2026-04-09 20:20:16.295 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.spy.server.job.FullSync | 内容=Shop GEO full sync completed. key=shop:geo:all, syncedCount=15
+2026-04-09 20:21:30.358 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=File Watcher | 类=o.s.b.d.a.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener | 内容=Restarting due to 13 class path changes (0 additions, 0 deletions, 13 modifications)
+2026-04-09 20:21:30.367 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=org.springframework.amqp.rabbit.RabbitListenerEndpointContainer#1-2 | 类=o.s.a.r.l.SimpleMessageListenerContainer | 内容=Waiting for workers to finish.
+2026-04-09 20:21:30.368 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=org.springframework.amqp.rabbit.RabbitListenerEndpointContainer#2-2 | 类=o.s.a.r.l.SimpleMessageListenerContainer | 内容=Waiting for workers to finish.
+2026-04-09 20:21:30.367 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=org.springframework.amqp.rabbit.RabbitListenerEndpointContainer#0-2 | 类=o.s.a.r.l.SimpleMessageListenerContainer | 内容=Waiting for workers to finish.
+2026-04-09 20:21:30.934 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=org.springframework.amqp.rabbit.RabbitListenerEndpointContainer#1-2 | 类=o.s.a.r.l.SimpleMessageListenerContainer | 内容=Successfully waited for workers to finish.
+2026-04-09 20:21:30.964 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=org.springframework.amqp.rabbit.RabbitListenerEndpointContainer#0-2 | 类=o.s.a.r.l.SimpleMessageListenerContainer | 内容=Successfully waited for workers to finish.
+2026-04-09 20:21:30.980 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=org.springframework.amqp.rabbit.RabbitListenerEndpointContainer#2-2 | 类=o.s.a.r.l.SimpleMessageListenerContainer | 内容=Successfully waited for workers to finish.
+2026-04-09 20:21:31.003 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=Thread-13 | 类=com.zaxxer.hikari.HikariDataSource | 内容=HikariPool-2 - Shutdown initiated...
+2026-04-09 20:21:31.007 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=Thread-13 | 类=com.zaxxer.hikari.HikariDataSource | 内容=HikariPool-2 - Shutdown completed.
+2026-04-09 20:21:31.085 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.spy.server.ServerApplication | 内容=Starting ServerApplication using Java 21.0.8 with PID 50020 (D:\poroject\去哪评\server\target\classes started by OUC in D:\poroject\去哪评\server)
+2026-04-09 20:21:31.086 | 级别=DEBUG | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.spy.server.ServerApplication | 内容=Running with Spring Boot v3.3.13, Spring v6.1.21
+2026-04-09 20:21:31.086 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.spy.server.ServerApplication | 内容=The following 1 profile is active: "dev"
+2026-04-09 20:21:31.413 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.d.r.c.RepositoryConfigurationDelegate | 内容=Multiple Spring Data modules found, entering strict repository configuration mode
+2026-04-09 20:21:31.413 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.d.r.c.RepositoryConfigurationDelegate | 内容=Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2026-04-09 20:21:31.421 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.d.r.c.RepositoryConfigurationDelegate | 内容=Finished Spring Data repository scanning in 7 ms. Found 0 Redis repository interfaces.
+2026-04-09 20:21:31.559 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.b.w.e.tomcat.TomcatWebServer | 内容=Tomcat initialized with port 8080 (http)
+2026-04-09 20:21:31.560 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.a.catalina.core.StandardService | 内容=Starting service [Tomcat]
+2026-04-09 20:21:31.560 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.a.catalina.core.StandardEngine | 内容=Starting Servlet engine: [Apache Tomcat/10.1.42]
+2026-04-09 20:21:31.584 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.a.c.c.C.[.[localhost].[/api] | 内容=Initializing Spring embedded WebApplicationContext
+2026-04-09 20:21:31.584 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.b.w.s.c.ServletWebServerApplicationContext | 内容=Root WebApplicationContext: initialization completed in 496 ms
+2026-04-09 20:21:31.597 | 级别=DEBUG | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.spy.server.config.TraceIdFilter | 内容=Filter 'traceIdFilter' configured for use
+2026-04-09 20:21:32.488 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=c.b.m.e.s.MybatisPlusApplicationContextAware | 内容=Register ApplicationContext instances org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext@3cab2500
+2026-04-09 20:21:32.673 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.b.d.a.OptionalLiveReloadServer | 内容=LiveReload server is running on port 35729
+2026-04-09 20:21:32.706 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.b.w.e.tomcat.TomcatWebServer | 内容=Tomcat started on port 8080 (http) with context path '/api'
+2026-04-09 20:21:32.706 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.a.r.c.CachingConnectionFactory | 内容=Attempting to connect to: [localhost:5672]
+2026-04-09 20:21:32.710 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.a.r.c.CachingConnectionFactory | 内容=Created new connection: rabbitConnectionFactory#6b72bc3a:0/SimpleConnection@6b3c50ab [delegate=amqp://guest@127.0.0.1:5672/, localPort=55904]
+2026-04-09 20:21:32.728 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.spy.server.ServerApplication | 内容=Started ServerApplication in 1.676 seconds (process running for 1658.605)
+2026-04-09 20:21:32.729 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.zaxxer.hikari.HikariDataSource | 内容=HikariPool-3 - Starting...
+2026-04-09 20:21:32.756 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.zaxxer.hikari.pool.HikariPool | 内容=HikariPool-3 - Added connection com.mysql.cj.jdbc.ConnectionImpl@7b32fda8
+2026-04-09 20:21:32.756 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.zaxxer.hikari.HikariDataSource | 内容=HikariPool-3 - Start completed.
+2026-04-09 20:21:32.762 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=scheduling-1 | 类=com.spy.server.job.IncrementSync | 内容=店铺 GEO 增量同步完成：本次无变更数据，GEO键=shop:geo:all
+2026-04-09 20:21:32.763 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.spy.server.job.FullSync | 内容=店铺 GEO 全量同步完成：GEO键=shop:geo:all，同步数量=15
+2026-04-09 20:21:32.763 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=c.s.s.c.ApplicationStartupLogger | 内容=应用启动完成：应用名称=dianping-server，当前环境=dev，端口=8080，上下文路径=/api
+2026-04-09 20:21:32.764 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.b.d.a.ConditionEvaluationDeltaLoggingListener | 内容=Condition evaluation unchanged
+2026-04-09 20:22:28.251 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=File Watcher | 类=o.s.b.d.a.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener | 内容=Restarting due to 2 class path changes (0 additions, 0 deletions, 2 modifications)
+2026-04-09 20:22:28.253 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=org.springframework.amqp.rabbit.RabbitListenerEndpointContainer#0-2 | 类=o.s.a.r.l.SimpleMessageListenerContainer | 内容=Waiting for workers to finish.
+2026-04-09 20:22:28.253 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=org.springframework.amqp.rabbit.RabbitListenerEndpointContainer#1-2 | 类=o.s.a.r.l.SimpleMessageListenerContainer | 内容=Waiting for workers to finish.
+2026-04-09 20:22:28.254 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=org.springframework.amqp.rabbit.RabbitListenerEndpointContainer#2-2 | 类=o.s.a.r.l.SimpleMessageListenerContainer | 内容=Waiting for workers to finish.
+2026-04-09 20:22:28.264 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=org.springframework.amqp.rabbit.RabbitListenerEndpointContainer#2-2 | 类=o.s.a.r.l.SimpleMessageListenerContainer | 内容=Successfully waited for workers to finish.
+2026-04-09 20:22:28.279 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=org.springframework.amqp.rabbit.RabbitListenerEndpointContainer#0-2 | 类=o.s.a.r.l.SimpleMessageListenerContainer | 内容=Successfully waited for workers to finish.
+2026-04-09 20:22:29.259 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=org.springframework.amqp.rabbit.RabbitListenerEndpointContainer#1-2 | 类=o.s.a.r.l.SimpleMessageListenerContainer | 内容=Successfully waited for workers to finish.
+2026-04-09 20:22:29.276 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=Thread-18 | 类=com.zaxxer.hikari.HikariDataSource | 内容=HikariPool-3 - Shutdown initiated...
+2026-04-09 20:22:29.279 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=Thread-18 | 类=com.zaxxer.hikari.HikariDataSource | 内容=HikariPool-3 - Shutdown completed.
+2026-04-09 20:22:29.373 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.spy.server.ServerApplication | 内容=Starting ServerApplication using Java 21.0.8 with PID 50020 (D:\poroject\去哪评\server\target\classes started by OUC in D:\poroject\去哪评\server)
+2026-04-09 20:22:29.373 | 级别=DEBUG | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.spy.server.ServerApplication | 内容=Running with Spring Boot v3.3.13, Spring v6.1.21
+2026-04-09 20:22:29.373 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.spy.server.ServerApplication | 内容=The following 1 profile is active: "dev"
+2026-04-09 20:22:29.616 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.d.r.c.RepositoryConfigurationDelegate | 内容=Multiple Spring Data modules found, entering strict repository configuration mode
+2026-04-09 20:22:29.616 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.d.r.c.RepositoryConfigurationDelegate | 内容=Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2026-04-09 20:22:29.627 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.d.r.c.RepositoryConfigurationDelegate | 内容=Finished Spring Data repository scanning in 9 ms. Found 0 Redis repository interfaces.
+2026-04-09 20:22:29.758 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.b.w.e.tomcat.TomcatWebServer | 内容=Tomcat initialized with port 8080 (http)
+2026-04-09 20:22:29.758 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.a.catalina.core.StandardService | 内容=Starting service [Tomcat]
+2026-04-09 20:22:29.758 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.a.catalina.core.StandardEngine | 内容=Starting Servlet engine: [Apache Tomcat/10.1.42]
+2026-04-09 20:22:29.779 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.a.c.c.C.[.[localhost].[/api] | 内容=Initializing Spring embedded WebApplicationContext
+2026-04-09 20:22:29.779 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.b.w.s.c.ServletWebServerApplicationContext | 内容=Root WebApplicationContext: initialization completed in 404 ms
+2026-04-09 20:22:29.798 | 级别=DEBUG | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.spy.server.config.TraceIdFilter | 内容=Filter 'traceIdFilter' configured for use
+2026-04-09 20:22:30.700 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=c.b.m.e.s.MybatisPlusApplicationContextAware | 内容=Register ApplicationContext instances org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext@17e2d197
+2026-04-09 20:22:30.890 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.b.d.a.OptionalLiveReloadServer | 内容=LiveReload server is running on port 35729
+2026-04-09 20:22:30.924 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.b.w.e.tomcat.TomcatWebServer | 内容=Tomcat started on port 8080 (http) with context path '/api'
+2026-04-09 20:22:30.925 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.a.r.c.CachingConnectionFactory | 内容=Attempting to connect to: [localhost:5672]
+2026-04-09 20:22:30.941 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.a.r.c.CachingConnectionFactory | 内容=Created new connection: rabbitConnectionFactory#5d775ed1:0/SimpleConnection@e3ebf3b [delegate=amqp://guest@127.0.0.1:5672/, localPort=55980]
+2026-04-09 20:22:30.956 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.spy.server.ServerApplication | 内容=Started ServerApplication in 1.609 seconds (process running for 1716.834)
+2026-04-09 20:22:30.958 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.zaxxer.hikari.HikariDataSource | 内容=HikariPool-4 - Starting...
+2026-04-09 20:22:30.969 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.zaxxer.hikari.pool.HikariPool | 内容=HikariPool-4 - Added connection com.mysql.cj.jdbc.ConnectionImpl@60bcea0c
+2026-04-09 20:22:30.970 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.zaxxer.hikari.HikariDataSource | 内容=HikariPool-4 - Start completed.
+2026-04-09 20:22:30.976 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=scheduling-1 | 类=com.spy.server.job.IncrementSync | 内容=店铺 GEO 增量同步完成：本次无变更数据，GEO键=shop:geo:all
+2026-04-09 20:22:30.977 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.spy.server.job.FullSync | 内容=店铺 GEO 全量同步完成：GEO键=shop:geo:all，同步数量=15
+2026-04-09 20:22:30.977 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=c.s.s.c.ApplicationStartupLogger | 内容=应用启动完成：应用名称=dianping-server，当前环境=dev，端口=8080，上下文路径=/api
+2026-04-09 20:22:30.978 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.b.d.a.ConditionEvaluationDeltaLoggingListener | 内容=Condition evaluation unchanged
+2026-04-09 20:28:54.141 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=File Watcher | 类=o.s.b.d.a.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener | 内容=Restarting due to 1 class path change (0 additions, 1 deletion, 0 modifications)
+2026-04-09 20:28:54.146 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=org.springframework.amqp.rabbit.RabbitListenerEndpointContainer#0-2 | 类=o.s.a.r.l.SimpleMessageListenerContainer | 内容=Waiting for workers to finish.
+2026-04-09 20:28:54.147 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=org.springframework.amqp.rabbit.RabbitListenerEndpointContainer#1-2 | 类=o.s.a.r.l.SimpleMessageListenerContainer | 内容=Waiting for workers to finish.
+2026-04-09 20:28:54.148 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=org.springframework.amqp.rabbit.RabbitListenerEndpointContainer#2-2 | 类=o.s.a.r.l.SimpleMessageListenerContainer | 内容=Waiting for workers to finish.
+2026-04-09 20:28:54.309 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=org.springframework.amqp.rabbit.RabbitListenerEndpointContainer#0-2 | 类=o.s.a.r.l.SimpleMessageListenerContainer | 内容=Successfully waited for workers to finish.
+2026-04-09 20:28:54.372 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=org.springframework.amqp.rabbit.RabbitListenerEndpointContainer#2-2 | 类=o.s.a.r.l.SimpleMessageListenerContainer | 内容=Successfully waited for workers to finish.
+2026-04-09 20:28:54.433 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=org.springframework.amqp.rabbit.RabbitListenerEndpointContainer#1-2 | 类=o.s.a.r.l.SimpleMessageListenerContainer | 内容=Successfully waited for workers to finish.
+2026-04-09 20:28:54.486 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=Thread-23 | 类=com.zaxxer.hikari.HikariDataSource | 内容=HikariPool-4 - Shutdown initiated...
+2026-04-09 20:28:54.492 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=Thread-23 | 类=com.zaxxer.hikari.HikariDataSource | 内容=HikariPool-4 - Shutdown completed.
+2026-04-09 20:28:54.654 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.spy.server.ServerApplication | 内容=Starting ServerApplication using Java 21.0.8 with PID 50020 (D:\poroject\去哪评\server\target\classes started by OUC in D:\poroject\去哪评\server)
+2026-04-09 20:28:54.654 | 级别=DEBUG | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.spy.server.ServerApplication | 内容=Running with Spring Boot v3.3.13, Spring v6.1.21
+2026-04-09 20:28:54.654 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.spy.server.ServerApplication | 内容=The following 1 profile is active: "dev"
+2026-04-09 20:28:56.755 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.d.r.c.RepositoryConfigurationDelegate | 内容=Multiple Spring Data modules found, entering strict repository configuration mode
+2026-04-09 20:28:56.755 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.d.r.c.RepositoryConfigurationDelegate | 内容=Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2026-04-09 20:28:56.779 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.d.r.c.RepositoryConfigurationDelegate | 内容=Finished Spring Data repository scanning in 23 ms. Found 0 Redis repository interfaces.
+2026-04-09 20:28:57.140 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.b.w.e.tomcat.TomcatWebServer | 内容=Tomcat initialized with port 8080 (http)
+2026-04-09 20:28:57.143 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.a.catalina.core.StandardService | 内容=Starting service [Tomcat]
+2026-04-09 20:28:57.144 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.a.catalina.core.StandardEngine | 内容=Starting Servlet engine: [Apache Tomcat/10.1.42]
+2026-04-09 20:28:57.193 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.a.c.c.C.[.[localhost].[/api] | 内容=Initializing Spring embedded WebApplicationContext
+2026-04-09 20:28:57.193 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.b.w.s.c.ServletWebServerApplicationContext | 内容=Root WebApplicationContext: initialization completed in 2537 ms
+2026-04-09 20:28:57.211 | 级别=DEBUG | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.spy.server.config.TraceIdFilter | 内容=Filter 'traceIdFilter' configured for use
+2026-04-09 20:28:58.992 | 级别=WARN  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext | 内容=Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'fileController' defined in file [D:\poroject\去哪评\server\target\classes\com\spy\server\controller\FileController.class]: Post-processing of merged bean definition failed
+2026-04-09 20:28:59.003 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.a.catalina.core.StandardService | 内容=Stopping service [Tomcat]
+2026-04-09 20:28:59.016 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.b.a.l.ConditionEvaluationReportLogger | 内容=
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2026-04-09 20:28:59.094 | 级别=ERROR | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.boot.SpringApplication | 内容=Application run failed
+org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'fileController' defined in file [D:\poroject\去哪评\server\target\classes\com\spy\server\controller\FileController.class]: Post-processing of merged bean definition failed
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:577)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:522)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:337)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:335)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:200)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:975)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:971)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:625)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:754)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:456)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:335)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1363)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1352)
+	at com.spy.server.ServerApplication.main(ServerApplication.java:14)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.boot.devtools.restart.RestartLauncher.run(RestartLauncher.java:50)
+Caused by: java.lang.IllegalStateException: Failed to introspect Class [com.spy.server.controller.FileController] from ClassLoader [org.springframework.boot.devtools.restart.classloader.RestartClassLoader@3a32d142]
+	at org.springframework.util.ReflectionUtils.getDeclaredFields(ReflectionUtils.java:757)
+	at org.springframework.util.ReflectionUtils.doWithLocalFields(ReflectionUtils.java:689)
+	at org.springframework.context.annotation.CommonAnnotationBeanPostProcessor.buildResourceMetadata(CommonAnnotationBeanPostProcessor.java:431)
+	at org.springframework.context.annotation.CommonAnnotationBeanPostProcessor.findResourceMetadata(CommonAnnotationBeanPostProcessor.java:412)
+	at org.springframework.context.annotation.CommonAnnotationBeanPostProcessor.postProcessMergedBeanDefinition(CommonAnnotationBeanPostProcessor.java:312)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.applyMergedBeanDefinitionPostProcessors(AbstractAutowireCapableBeanFactory.java:1103)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:574)
+	... 18 common frames omitted
+Caused by: java.lang.NoClassDefFoundError: com/spy/server/file/CosManager
+	at java.base/java.lang.Class.getDeclaredFields0(Native Method)
+	at java.base/java.lang.Class.privateGetDeclaredFields(Class.java:3473)
+	at java.base/java.lang.Class.getDeclaredFields(Class.java:2542)
+	at org.springframework.util.ReflectionUtils.getDeclaredFields(ReflectionUtils.java:752)
+	... 24 common frames omitted
+Caused by: java.lang.ClassNotFoundException: com.spy.server.file.CosManager
+	at java.base/jdk.internal.loader.BuiltinClassLoader.loadClass(BuiltinClassLoader.java:641)
+	at java.base/jdk.internal.loader.ClassLoaders$AppClassLoader.loadClass(ClassLoaders.java:188)
+	at java.base/java.lang.ClassLoader.loadClass(ClassLoader.java:526)
+	at java.base/java.lang.Class.forName0(Native Method)
+	at java.base/java.lang.Class.forName(Class.java:534)
+	at java.base/java.lang.Class.forName(Class.java:513)
+	at org.springframework.boot.devtools.restart.classloader.RestartClassLoader.loadClass(RestartClassLoader.java:121)
+	at java.base/java.lang.ClassLoader.loadClass(ClassLoader.java:526)
+	... 28 common frames omitted
+2026-04-09 20:29:08.585 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.spy.server.ServerApplication | 内容=Starting ServerApplication using Java 21.0.8 with PID 50020 (D:\poroject\去哪评\server\target\classes started by OUC in D:\poroject\去哪评\server)
+2026-04-09 20:29:08.585 | 级别=DEBUG | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.spy.server.ServerApplication | 内容=Running with Spring Boot v3.3.13, Spring v6.1.21
+2026-04-09 20:29:08.586 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.spy.server.ServerApplication | 内容=The following 1 profile is active: "dev"
+2026-04-09 20:29:10.413 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.d.r.c.RepositoryConfigurationDelegate | 内容=Multiple Spring Data modules found, entering strict repository configuration mode
+2026-04-09 20:29:10.413 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.d.r.c.RepositoryConfigurationDelegate | 内容=Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2026-04-09 20:29:10.422 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.d.r.c.RepositoryConfigurationDelegate | 内容=Finished Spring Data repository scanning in 7 ms. Found 0 Redis repository interfaces.
+2026-04-09 20:29:10.592 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.b.w.e.tomcat.TomcatWebServer | 内容=Tomcat initialized with port 8080 (http)
+2026-04-09 20:29:10.595 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.a.catalina.core.StandardService | 内容=Starting service [Tomcat]
+2026-04-09 20:29:10.595 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.a.catalina.core.StandardEngine | 内容=Starting Servlet engine: [Apache Tomcat/10.1.42]
+2026-04-09 20:29:10.623 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.a.c.c.C.[.[localhost].[/api] | 内容=Initializing Spring embedded WebApplicationContext
+2026-04-09 20:29:10.623 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.b.w.s.c.ServletWebServerApplicationContext | 内容=Root WebApplicationContext: initialization completed in 2034 ms
+2026-04-09 20:29:10.636 | 级别=DEBUG | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.spy.server.config.TraceIdFilter | 内容=Filter 'traceIdFilter' configured for use
+2026-04-09 20:29:12.789 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=c.b.m.e.s.MybatisPlusApplicationContextAware | 内容=Register ApplicationContext instances org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext@2f8d3035
+2026-04-09 20:29:13.146 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.b.d.a.OptionalLiveReloadServer | 内容=LiveReload server is running on port 35729
+2026-04-09 20:29:13.200 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.b.w.e.tomcat.TomcatWebServer | 内容=Tomcat started on port 8080 (http) with context path '/api'
+2026-04-09 20:29:13.200 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.a.r.c.CachingConnectionFactory | 内容=Attempting to connect to: [localhost:5672]
+2026-04-09 20:29:13.207 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.a.r.c.CachingConnectionFactory | 内容=Created new connection: rabbitConnectionFactory#184b1f35:0/SimpleConnection@4e57eda [delegate=amqp://guest@127.0.0.1:5672/, localPort=56570]
+2026-04-09 20:29:13.249 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.spy.server.ServerApplication | 内容=Started ServerApplication in 4.717 seconds (process running for 2119.127)
+2026-04-09 20:29:13.250 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=c.s.s.c.ApplicationStartupLogger | 内容=应用启动完成：应用名称=dianping-server，当前环境=dev，端口=8080，上下文路径=/api
+2026-04-09 20:29:13.251 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.zaxxer.hikari.HikariDataSource | 内容=HikariPool-5 - Starting...
+2026-04-09 20:29:13.284 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.zaxxer.hikari.pool.HikariPool | 内容=HikariPool-5 - Added connection com.mysql.cj.jdbc.ConnectionImpl@126b89ad
+2026-04-09 20:29:13.284 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.zaxxer.hikari.HikariDataSource | 内容=HikariPool-5 - Start completed.
+2026-04-09 20:29:13.315 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=scheduling-1 | 类=com.spy.server.job.IncrementSync | 内容=店铺 GEO 增量同步完成：本次无变更数据，GEO键=shop:geo:all
+2026-04-09 20:29:13.320 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.spy.server.job.FullSync | 内容=店铺 GEO 全量同步完成：GEO键=shop:geo:all，同步数量=15
+2026-04-09 20:29:13.322 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.b.d.a.ConditionEvaluationDeltaLoggingListener | 内容=Condition evaluation unchanged
+2026-04-09 20:34:41.237 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=File Watcher | 类=o.s.b.d.a.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener | 内容=Restarting due to 1 class path change (0 additions, 0 deletions, 1 modification)
+2026-04-09 20:34:41.241 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=org.springframework.amqp.rabbit.RabbitListenerEndpointContainer#0-2 | 类=o.s.a.r.l.SimpleMessageListenerContainer | 内容=Waiting for workers to finish.
+2026-04-09 20:34:41.242 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=org.springframework.amqp.rabbit.RabbitListenerEndpointContainer#1-2 | 类=o.s.a.r.l.SimpleMessageListenerContainer | 内容=Waiting for workers to finish.
+2026-04-09 20:34:41.243 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=org.springframework.amqp.rabbit.RabbitListenerEndpointContainer#2-2 | 类=o.s.a.r.l.SimpleMessageListenerContainer | 内容=Waiting for workers to finish.
+2026-04-09 20:34:41.930 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=org.springframework.amqp.rabbit.RabbitListenerEndpointContainer#1-2 | 类=o.s.a.r.l.SimpleMessageListenerContainer | 内容=Successfully waited for workers to finish.
+2026-04-09 20:34:42.007 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=org.springframework.amqp.rabbit.RabbitListenerEndpointContainer#0-2 | 类=o.s.a.r.l.SimpleMessageListenerContainer | 内容=Successfully waited for workers to finish.
+2026-04-09 20:34:42.022 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=org.springframework.amqp.rabbit.RabbitListenerEndpointContainer#2-2 | 类=o.s.a.r.l.SimpleMessageListenerContainer | 内容=Successfully waited for workers to finish.
+2026-04-09 20:34:42.039 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=Thread-28 | 类=com.zaxxer.hikari.HikariDataSource | 内容=HikariPool-5 - Shutdown initiated...
+2026-04-09 20:34:42.043 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=Thread-28 | 类=com.zaxxer.hikari.HikariDataSource | 内容=HikariPool-5 - Shutdown completed.
+2026-04-09 20:34:42.167 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.spy.server.ServerApplication | 内容=Starting ServerApplication using Java 21.0.8 with PID 50020 (D:\poroject\去哪评\server\target\classes started by OUC in D:\poroject\去哪评\server)
+2026-04-09 20:34:42.167 | 级别=DEBUG | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.spy.server.ServerApplication | 内容=Running with Spring Boot v3.3.13, Spring v6.1.21
+2026-04-09 20:34:42.167 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.spy.server.ServerApplication | 内容=The following 1 profile is active: "dev"
+2026-04-09 20:34:42.596 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.d.r.c.RepositoryConfigurationDelegate | 内容=Multiple Spring Data modules found, entering strict repository configuration mode
+2026-04-09 20:34:42.597 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.d.r.c.RepositoryConfigurationDelegate | 内容=Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2026-04-09 20:34:42.605 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.d.r.c.RepositoryConfigurationDelegate | 内容=Finished Spring Data repository scanning in 8 ms. Found 0 Redis repository interfaces.
+2026-04-09 20:34:42.774 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.b.w.e.tomcat.TomcatWebServer | 内容=Tomcat initialized with port 8080 (http)
+2026-04-09 20:34:42.775 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.a.catalina.core.StandardService | 内容=Starting service [Tomcat]
+2026-04-09 20:34:42.775 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.a.catalina.core.StandardEngine | 内容=Starting Servlet engine: [Apache Tomcat/10.1.42]
+2026-04-09 20:34:42.805 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.a.c.c.C.[.[localhost].[/api] | 内容=Initializing Spring embedded WebApplicationContext
+2026-04-09 20:34:42.805 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.b.w.s.c.ServletWebServerApplicationContext | 内容=Root WebApplicationContext: initialization completed in 635 ms
+2026-04-09 20:34:42.816 | 级别=DEBUG | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.spy.server.config.TraceIdFilter | 内容=Filter 'traceIdFilter' configured for use
+2026-04-09 20:34:43.941 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=c.b.m.e.s.MybatisPlusApplicationContextAware | 内容=Register ApplicationContext instances org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext@45d4d13b
+2026-04-09 20:34:44.220 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.b.d.a.OptionalLiveReloadServer | 内容=LiveReload server is running on port 35729
+2026-04-09 20:34:44.264 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.b.w.e.tomcat.TomcatWebServer | 内容=Tomcat started on port 8080 (http) with context path '/api'
+2026-04-09 20:34:44.265 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.a.r.c.CachingConnectionFactory | 内容=Attempting to connect to: [localhost:5672]
+2026-04-09 20:34:44.270 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.a.r.c.CachingConnectionFactory | 内容=Created new connection: rabbitConnectionFactory#14a810a3:0/SimpleConnection@569d3d60 [delegate=amqp://guest@127.0.0.1:5672/, localPort=57033]
+2026-04-09 20:34:44.302 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.spy.server.ServerApplication | 内容=Started ServerApplication in 2.196 seconds (process running for 2450.179)
+2026-04-09 20:34:44.302 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=c.s.s.c.ApplicationStartupLogger | 内容=应用启动完成：应用名称=dianping-server，当前环境=dev，端口=8080，上下文路径=/api
+2026-04-09 20:34:44.304 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.zaxxer.hikari.HikariDataSource | 内容=HikariPool-6 - Starting...
+2026-04-09 20:34:44.327 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.zaxxer.hikari.pool.HikariPool | 内容=HikariPool-6 - Added connection com.mysql.cj.jdbc.ConnectionImpl@39123aae
+2026-04-09 20:34:44.327 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.zaxxer.hikari.HikariDataSource | 内容=HikariPool-6 - Start completed.
+2026-04-09 20:34:44.343 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=scheduling-1 | 类=com.spy.server.job.IncrementSync | 内容=店铺 GEO 增量同步完成：本次无变更数据，GEO键=shop:geo:all
+2026-04-09 20:34:44.343 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.spy.server.job.FullSync | 内容=店铺 GEO 全量同步完成：GEO键=shop:geo:all，同步数量=15
+2026-04-09 20:34:44.344 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.b.d.a.ConditionEvaluationDeltaLoggingListener | 内容=Condition evaluation unchanged
+2026-04-09 20:36:35.246 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=File Watcher | 类=o.s.b.d.a.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener | 内容=Restarting due to 20 class path changes (0 additions, 16 deletions, 4 modifications)
+2026-04-09 20:36:35.252 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=org.springframework.amqp.rabbit.RabbitListenerEndpointContainer#0-2 | 类=o.s.a.r.l.SimpleMessageListenerContainer | 内容=Waiting for workers to finish.
+2026-04-09 20:36:35.252 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=org.springframework.amqp.rabbit.RabbitListenerEndpointContainer#1-2 | 类=o.s.a.r.l.SimpleMessageListenerContainer | 内容=Waiting for workers to finish.
+2026-04-09 20:36:35.253 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=org.springframework.amqp.rabbit.RabbitListenerEndpointContainer#2-2 | 类=o.s.a.r.l.SimpleMessageListenerContainer | 内容=Waiting for workers to finish.
+2026-04-09 20:36:36.190 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=org.springframework.amqp.rabbit.RabbitListenerEndpointContainer#0-2 | 类=o.s.a.r.l.SimpleMessageListenerContainer | 内容=Successfully waited for workers to finish.
+2026-04-09 20:36:36.221 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=org.springframework.amqp.rabbit.RabbitListenerEndpointContainer#1-2 | 类=o.s.a.r.l.SimpleMessageListenerContainer | 内容=Successfully waited for workers to finish.
+2026-04-09 20:36:36.221 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=org.springframework.amqp.rabbit.RabbitListenerEndpointContainer#2-2 | 类=o.s.a.r.l.SimpleMessageListenerContainer | 内容=Successfully waited for workers to finish.
+2026-04-09 20:36:36.237 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=Thread-36 | 类=com.zaxxer.hikari.HikariDataSource | 内容=HikariPool-6 - Shutdown initiated...
+2026-04-09 20:36:36.241 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=Thread-36 | 类=com.zaxxer.hikari.HikariDataSource | 内容=HikariPool-6 - Shutdown completed.
+2026-04-09 20:36:36.364 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.spy.server.ServerApplication | 内容=Starting ServerApplication using Java 21.0.8 with PID 50020 (D:\poroject\去哪评\server\target\classes started by OUC in D:\poroject\去哪评\server)
+2026-04-09 20:36:36.364 | 级别=DEBUG | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.spy.server.ServerApplication | 内容=Running with Spring Boot v3.3.13, Spring v6.1.21
+2026-04-09 20:36:36.364 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.spy.server.ServerApplication | 内容=The following 1 profile is active: "dev"
+2026-04-09 20:36:36.798 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.d.r.c.RepositoryConfigurationDelegate | 内容=Multiple Spring Data modules found, entering strict repository configuration mode
+2026-04-09 20:36:36.798 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.d.r.c.RepositoryConfigurationDelegate | 内容=Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2026-04-09 20:36:36.812 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.d.r.c.RepositoryConfigurationDelegate | 内容=Finished Spring Data repository scanning in 13 ms. Found 0 Redis repository interfaces.
+2026-04-09 20:36:37.044 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.b.w.e.tomcat.TomcatWebServer | 内容=Tomcat initialized with port 8080 (http)
+2026-04-09 20:36:37.045 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.a.catalina.core.StandardService | 内容=Starting service [Tomcat]
+2026-04-09 20:36:37.045 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.a.catalina.core.StandardEngine | 内容=Starting Servlet engine: [Apache Tomcat/10.1.42]
+2026-04-09 20:36:37.077 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.a.c.c.C.[.[localhost].[/api] | 内容=Initializing Spring embedded WebApplicationContext
+2026-04-09 20:36:37.078 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.b.w.s.c.ServletWebServerApplicationContext | 内容=Root WebApplicationContext: initialization completed in 710 ms
+2026-04-09 20:36:37.093 | 级别=DEBUG | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.spy.server.config.TraceIdFilter | 内容=Filter 'traceIdFilter' configured for use
+2026-04-09 20:36:37.749 | 级别=WARN  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext | 内容=Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'couponOrderController': Injection of resource dependencies failed
+2026-04-09 20:36:37.754 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.a.catalina.core.StandardService | 内容=Stopping service [Tomcat]
+2026-04-09 20:36:37.759 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.b.a.l.ConditionEvaluationReportLogger | 内容=
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2026-04-09 20:36:37.769 | 级别=ERROR | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.b.d.LoggingFailureAnalysisReporter | 内容=
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+A component required a bean of type 'com.spy.server.service.CouponOrderService' that could not be found.
+
+
+Action:
+
+Consider defining a bean of type 'com.spy.server.service.CouponOrderService' in your configuration.
+
+2026-04-09 20:36:39.668 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.spy.server.ServerApplication | 内容=Starting ServerApplication using Java 21.0.8 with PID 50020 (D:\poroject\去哪评\server\target\classes started by OUC in D:\poroject\去哪评\server)
+2026-04-09 20:36:39.669 | 级别=DEBUG | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.spy.server.ServerApplication | 内容=Running with Spring Boot v3.3.13, Spring v6.1.21
+2026-04-09 20:36:39.669 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.spy.server.ServerApplication | 内容=The following 1 profile is active: "dev"
+2026-04-09 20:36:40.109 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.d.r.c.RepositoryConfigurationDelegate | 内容=Multiple Spring Data modules found, entering strict repository configuration mode
+2026-04-09 20:36:40.109 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.d.r.c.RepositoryConfigurationDelegate | 内容=Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2026-04-09 20:36:40.121 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.d.r.c.RepositoryConfigurationDelegate | 内容=Finished Spring Data repository scanning in 11 ms. Found 0 Redis repository interfaces.
+2026-04-09 20:36:40.287 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.b.w.e.tomcat.TomcatWebServer | 内容=Tomcat initialized with port 8080 (http)
+2026-04-09 20:36:40.288 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.a.catalina.core.StandardService | 内容=Starting service [Tomcat]
+2026-04-09 20:36:40.288 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.a.catalina.core.StandardEngine | 内容=Starting Servlet engine: [Apache Tomcat/10.1.42]
+2026-04-09 20:36:40.311 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.a.c.c.C.[.[localhost].[/api] | 内容=Initializing Spring embedded WebApplicationContext
+2026-04-09 20:36:40.311 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.b.w.s.c.ServletWebServerApplicationContext | 内容=Root WebApplicationContext: initialization completed in 641 ms
+2026-04-09 20:36:40.324 | 级别=DEBUG | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.spy.server.config.TraceIdFilter | 内容=Filter 'traceIdFilter' configured for use
+2026-04-09 20:36:41.382 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=c.b.m.e.s.MybatisPlusApplicationContextAware | 内容=Register ApplicationContext instances org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext@56540033
+2026-04-09 20:36:41.613 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.b.d.a.OptionalLiveReloadServer | 内容=LiveReload server is running on port 35729
+2026-04-09 20:36:41.672 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.b.w.e.tomcat.TomcatWebServer | 内容=Tomcat started on port 8080 (http) with context path '/api'
+2026-04-09 20:36:41.674 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.a.r.c.CachingConnectionFactory | 内容=Attempting to connect to: [localhost:5672]
+2026-04-09 20:36:41.686 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.a.r.c.CachingConnectionFactory | 内容=Created new connection: rabbitConnectionFactory#d48e3d2:0/SimpleConnection@5657ee27 [delegate=amqp://guest@127.0.0.1:5672/, localPort=57197]
+2026-04-09 20:36:41.733 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.spy.server.ServerApplication | 内容=Started ServerApplication in 2.088 seconds (process running for 2567.61)
+2026-04-09 20:36:41.735 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.zaxxer.hikari.HikariDataSource | 内容=HikariPool-7 - Starting...
+2026-04-09 20:36:41.745 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.zaxxer.hikari.pool.HikariPool | 内容=HikariPool-7 - Added connection com.mysql.cj.jdbc.ConnectionImpl@6ca5b31e
+2026-04-09 20:36:41.746 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.zaxxer.hikari.HikariDataSource | 内容=HikariPool-7 - Start completed.
+2026-04-09 20:36:41.756 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=scheduling-1 | 类=com.spy.server.job.IncrementSync | 内容=店铺 GEO 增量同步完成：本次无变更数据，GEO键=shop:geo:all
+2026-04-09 20:36:41.756 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.spy.server.job.FullSync | 内容=店铺 GEO 全量同步完成：GEO键=shop:geo:all，同步数量=15
+2026-04-09 20:36:41.756 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=c.s.s.c.ApplicationStartupLogger | 内容=应用启动完成：应用名称=dianping-server，当前环境=dev，端口=8080，上下文路径=/api
+2026-04-09 20:36:41.757 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.b.d.a.ConditionEvaluationDeltaLoggingListener | 内容=Condition evaluation unchanged
+2026-04-09 20:42:28.823 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=File Watcher | 类=o.s.b.d.a.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener | 内容=Restarting due to 2 class path changes (0 additions, 0 deletions, 2 modifications)
+2026-04-09 20:42:28.827 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=org.springframework.amqp.rabbit.RabbitListenerEndpointContainer#0-2 | 类=o.s.a.r.l.SimpleMessageListenerContainer | 内容=Waiting for workers to finish.
+2026-04-09 20:42:28.827 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=org.springframework.amqp.rabbit.RabbitListenerEndpointContainer#1-2 | 类=o.s.a.r.l.SimpleMessageListenerContainer | 内容=Waiting for workers to finish.
+2026-04-09 20:42:28.828 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=org.springframework.amqp.rabbit.RabbitListenerEndpointContainer#2-2 | 类=o.s.a.r.l.SimpleMessageListenerContainer | 内容=Waiting for workers to finish.
+2026-04-09 20:42:29.534 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=org.springframework.amqp.rabbit.RabbitListenerEndpointContainer#1-2 | 类=o.s.a.r.l.SimpleMessageListenerContainer | 内容=Successfully waited for workers to finish.
+2026-04-09 20:42:29.550 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=org.springframework.amqp.rabbit.RabbitListenerEndpointContainer#0-2 | 类=o.s.a.r.l.SimpleMessageListenerContainer | 内容=Successfully waited for workers to finish.
+2026-04-09 20:42:29.566 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=org.springframework.amqp.rabbit.RabbitListenerEndpointContainer#2-2 | 类=o.s.a.r.l.SimpleMessageListenerContainer | 内容=Successfully waited for workers to finish.
+2026-04-09 20:42:29.609 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=Thread-41 | 类=com.zaxxer.hikari.HikariDataSource | 内容=HikariPool-7 - Shutdown initiated...
+2026-04-09 20:42:29.613 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=Thread-41 | 类=com.zaxxer.hikari.HikariDataSource | 内容=HikariPool-7 - Shutdown completed.
+2026-04-09 20:42:29.726 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.spy.server.ServerApplication | 内容=Starting ServerApplication using Java 21.0.8 with PID 50020 (D:\poroject\去哪评\server\target\classes started by OUC in D:\poroject\去哪评\server)
+2026-04-09 20:42:29.726 | 级别=DEBUG | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.spy.server.ServerApplication | 内容=Running with Spring Boot v3.3.13, Spring v6.1.21
+2026-04-09 20:42:29.726 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.spy.server.ServerApplication | 内容=The following 1 profile is active: "dev"
+2026-04-09 20:42:30.008 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.d.r.c.RepositoryConfigurationDelegate | 内容=Multiple Spring Data modules found, entering strict repository configuration mode
+2026-04-09 20:42:30.008 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.d.r.c.RepositoryConfigurationDelegate | 内容=Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2026-04-09 20:42:30.015 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.d.r.c.RepositoryConfigurationDelegate | 内容=Finished Spring Data repository scanning in 7 ms. Found 0 Redis repository interfaces.
+2026-04-09 20:42:30.198 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.b.w.e.tomcat.TomcatWebServer | 内容=Tomcat initialized with port 8080 (http)
+2026-04-09 20:42:30.199 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.a.catalina.core.StandardService | 内容=Starting service [Tomcat]
+2026-04-09 20:42:30.199 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.a.catalina.core.StandardEngine | 内容=Starting Servlet engine: [Apache Tomcat/10.1.42]
+2026-04-09 20:42:30.234 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.a.c.c.C.[.[localhost].[/api] | 内容=Initializing Spring embedded WebApplicationContext
+2026-04-09 20:42:30.234 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.b.w.s.c.ServletWebServerApplicationContext | 内容=Root WebApplicationContext: initialization completed in 505 ms
+2026-04-09 20:42:30.246 | 级别=DEBUG | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.spy.server.config.TraceIdFilter | 内容=Filter 'traceIdFilter' configured for use
+2026-04-09 20:42:31.303 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=c.b.m.e.s.MybatisPlusApplicationContextAware | 内容=Register ApplicationContext instances org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext@76543c1c
+2026-04-09 20:42:31.549 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.b.d.a.OptionalLiveReloadServer | 内容=LiveReload server is running on port 35729
+2026-04-09 20:42:31.588 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.b.w.e.tomcat.TomcatWebServer | 内容=Tomcat started on port 8080 (http) with context path '/api'
+2026-04-09 20:42:31.589 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.a.r.c.CachingConnectionFactory | 内容=Attempting to connect to: [localhost:5672]
+2026-04-09 20:42:31.600 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.a.r.c.CachingConnectionFactory | 内容=Created new connection: rabbitConnectionFactory#4a9dac78:0/SimpleConnection@41403420 [delegate=amqp://guest@127.0.0.1:5672/, localPort=57735]
+2026-04-09 20:42:31.624 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.spy.server.ServerApplication | 内容=Started ServerApplication in 1.955 seconds (process running for 2917.501)
+2026-04-09 20:42:31.625 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=c.s.s.c.ApplicationStartupLogger | 内容=应用启动完成：应用名称=dianping-server，当前环境=dev，端口=8080，上下文路径=/api
+2026-04-09 20:42:31.626 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.zaxxer.hikari.HikariDataSource | 内容=HikariPool-8 - Starting...
+2026-04-09 20:42:31.639 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.zaxxer.hikari.pool.HikariPool | 内容=HikariPool-8 - Added connection com.mysql.cj.jdbc.ConnectionImpl@761356c3
+2026-04-09 20:42:31.640 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.zaxxer.hikari.HikariDataSource | 内容=HikariPool-8 - Start completed.
+2026-04-09 20:42:31.651 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=scheduling-1 | 类=com.spy.server.job.IncrementSync | 内容=店铺 GEO 增量同步完成：本次无变更数据，GEO键=shop:geo:all
+2026-04-09 20:42:31.652 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.spy.server.job.FullSync | 内容=店铺 GEO 全量同步完成：GEO键=shop:geo:all，同步数量=15
+2026-04-09 20:42:31.653 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.b.d.a.ConditionEvaluationDeltaLoggingListener | 内容=Condition evaluation unchanged
+2026-04-09 20:42:43.223 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=File Watcher | 类=o.s.b.d.a.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener | 内容=Restarting due to 1 class path change (0 additions, 0 deletions, 1 modification)
+2026-04-09 20:42:43.225 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=org.springframework.amqp.rabbit.RabbitListenerEndpointContainer#0-2 | 类=o.s.a.r.l.SimpleMessageListenerContainer | 内容=Waiting for workers to finish.
+2026-04-09 20:42:43.226 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=org.springframework.amqp.rabbit.RabbitListenerEndpointContainer#1-2 | 类=o.s.a.r.l.SimpleMessageListenerContainer | 内容=Waiting for workers to finish.
+2026-04-09 20:42:43.227 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=org.springframework.amqp.rabbit.RabbitListenerEndpointContainer#2-2 | 类=o.s.a.r.l.SimpleMessageListenerContainer | 内容=Waiting for workers to finish.
+2026-04-09 20:42:43.701 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=org.springframework.amqp.rabbit.RabbitListenerEndpointContainer#0-2 | 类=o.s.a.r.l.SimpleMessageListenerContainer | 内容=Successfully waited for workers to finish.
+2026-04-09 20:42:43.732 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=org.springframework.amqp.rabbit.RabbitListenerEndpointContainer#2-2 | 类=o.s.a.r.l.SimpleMessageListenerContainer | 内容=Successfully waited for workers to finish.
+2026-04-09 20:42:43.732 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=org.springframework.amqp.rabbit.RabbitListenerEndpointContainer#1-2 | 类=o.s.a.r.l.SimpleMessageListenerContainer | 内容=Successfully waited for workers to finish.
+2026-04-09 20:42:43.768 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=Thread-49 | 类=com.zaxxer.hikari.HikariDataSource | 内容=HikariPool-8 - Shutdown initiated...
+2026-04-09 20:42:43.771 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=Thread-49 | 类=com.zaxxer.hikari.HikariDataSource | 内容=HikariPool-8 - Shutdown completed.
+2026-04-09 20:42:43.866 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.spy.server.ServerApplication | 内容=Starting ServerApplication using Java 21.0.8 with PID 50020 (D:\poroject\去哪评\server\target\classes started by OUC in D:\poroject\去哪评\server)
+2026-04-09 20:42:43.866 | 级别=DEBUG | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.spy.server.ServerApplication | 内容=Running with Spring Boot v3.3.13, Spring v6.1.21
+2026-04-09 20:42:43.866 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.spy.server.ServerApplication | 内容=The following 1 profile is active: "dev"
+2026-04-09 20:42:44.162 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.d.r.c.RepositoryConfigurationDelegate | 内容=Multiple Spring Data modules found, entering strict repository configuration mode
+2026-04-09 20:42:44.162 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.d.r.c.RepositoryConfigurationDelegate | 内容=Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2026-04-09 20:42:44.172 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.d.r.c.RepositoryConfigurationDelegate | 内容=Finished Spring Data repository scanning in 10 ms. Found 0 Redis repository interfaces.
+2026-04-09 20:42:44.357 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.b.w.e.tomcat.TomcatWebServer | 内容=Tomcat initialized with port 8080 (http)
+2026-04-09 20:42:44.359 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.a.catalina.core.StandardService | 内容=Starting service [Tomcat]
+2026-04-09 20:42:44.359 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.a.catalina.core.StandardEngine | 内容=Starting Servlet engine: [Apache Tomcat/10.1.42]
+2026-04-09 20:42:44.392 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.a.c.c.C.[.[localhost].[/api] | 内容=Initializing Spring embedded WebApplicationContext
+2026-04-09 20:42:44.392 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.b.w.s.c.ServletWebServerApplicationContext | 内容=Root WebApplicationContext: initialization completed in 522 ms
+2026-04-09 20:42:44.407 | 级别=DEBUG | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.spy.server.config.TraceIdFilter | 内容=Filter 'traceIdFilter' configured for use
+2026-04-09 20:42:45.623 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=c.b.m.e.s.MybatisPlusApplicationContextAware | 内容=Register ApplicationContext instances org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext@75c43d03
+2026-04-09 20:42:45.869 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.b.d.a.OptionalLiveReloadServer | 内容=LiveReload server is running on port 35729
+2026-04-09 20:42:46.040 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.b.w.e.tomcat.TomcatWebServer | 内容=Tomcat started on port 8080 (http) with context path '/api'
+2026-04-09 20:42:46.041 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.a.r.c.CachingConnectionFactory | 内容=Attempting to connect to: [localhost:5672]
+2026-04-09 20:42:46.088 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.a.r.c.CachingConnectionFactory | 内容=Created new connection: rabbitConnectionFactory#19bbd99:0/SimpleConnection@6b67dc9f [delegate=amqp://guest@127.0.0.1:5672/, localPort=57811]
+2026-04-09 20:42:46.136 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.spy.server.ServerApplication | 内容=Started ServerApplication in 2.305 seconds (process running for 2932.014)
+2026-04-09 20:42:46.139 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.zaxxer.hikari.HikariDataSource | 内容=HikariPool-9 - Starting...
+2026-04-09 20:42:46.151 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.zaxxer.hikari.pool.HikariPool | 内容=HikariPool-9 - Added connection com.mysql.cj.jdbc.ConnectionImpl@6db11b64
+2026-04-09 20:42:46.152 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.zaxxer.hikari.HikariDataSource | 内容=HikariPool-9 - Start completed.
+2026-04-09 20:42:46.166 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=com.spy.server.job.FullSync | 内容=店铺 GEO 全量同步完成：GEO键=shop:geo:all，同步数量=15
+2026-04-09 20:42:46.166 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=c.s.s.c.ApplicationStartupLogger | 内容=应用启动完成：应用名称=dianping-server，当前环境=dev，端口=8080，上下文路径=/api
+2026-04-09 20:42:46.168 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=restartedMain | 类=o.s.b.d.a.ConditionEvaluationDeltaLoggingListener | 内容=Condition evaluation unchanged
+2026-04-09 20:42:46.171 | 级别=INFO  | 应用=dianping-server | 环境=dev | 链路=无 | 线程=scheduling-1 | 类=com.spy.server.job.IncrementSync | 内容=店铺 GEO 增量同步完成：本次无变更数据，GEO键=shop:geo:all

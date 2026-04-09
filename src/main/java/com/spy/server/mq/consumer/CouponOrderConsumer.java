@@ -50,7 +50,7 @@ public class CouponOrderConsumer {
         long deliveryTag = message.getMessageProperties().getDeliveryTag();
         String msgId = message.getMessageProperties().getMessageId();
         String bizType = "COUPON_ORDER";
-        log.info("订单创建消息到达消费者, deliveryTag={}, msgId={}", deliveryTag, msgId);
+        log.info("订单创建消息到达消费者：投递标签={}，消息ID={}", deliveryTag, msgId);
         Long couponId = event.getCouponId();
         if (couponId == null || couponId <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "参数异常");
@@ -67,14 +67,14 @@ public class CouponOrderConsumer {
             try {
                 // 1. 判空保护
                 if (msgId == null || msgId.isBlank()) {
-                    log.error("messageId为空，拒绝消费");
+                    log.error("订单创建消息缺少消息ID，拒绝消费");
                     channel.basicNack(deliveryTag, false, true);
                     return;
                 }
 
                 boolean firstConsume = consumeRecordService.tryInsert(msgId, "COUPON_ORDER");
                 if (!firstConsume) {
-                    log.warn("重复消息，直接ack，megId={}", msgId);
+                    log.warn("订单创建消息重复消费，直接确认：消息ID={}", msgId);
                     // 说明这条消息已经处理过
                     channel.basicAck(deliveryTag, false);
                     return;
@@ -116,9 +116,9 @@ public class CouponOrderConsumer {
                 consumeRecordService.markSuccess(msgId, bizType);
                 // 第二个false代表的是，是否批量确认在这个消息之前的东西。
                 channel.basicAck(deliveryTag, false);
-                log.info("订单创建消息成功, couponId={}, userId={}", couponId, userId);
+                log.info("订单创建消息消费成功：优惠券ID={}，用户ID={}", couponId, userId);
             } catch (Exception e) {
-                log.error("消费失败, msgId={}", msgId, e);
+                log.error("订单创建消息消费失败：消息ID={}", msgId, e);
 
                 // 标记失败
                 if (msgId != null && !msgId.isBlank()) {

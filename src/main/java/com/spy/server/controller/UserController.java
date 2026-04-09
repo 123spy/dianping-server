@@ -54,6 +54,7 @@ public class UserController {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         long result = userService.userRegister(userAccount, userPassword);
+        log.info("用户注册成功：用户账号={}，用户ID={}", userAccount, result);
         return ResultUtil.success(result);
     }
 
@@ -70,6 +71,7 @@ public class UserController {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         User user = userService.userLogin(userAccount, userPassword, request);
+        log.info("账号密码登录成功：用户账号={}，用户ID={}", userAccount, user.getId());
         UserVO userVO = userService.getUserVO(user);
         return ResultUtil.success(userVO);
     }
@@ -97,6 +99,7 @@ public class UserController {
 
         User user = userService.userLoginByPhone(userPhone, request);
         redisTemplate.delete(codeKey);
+        log.info("手机号验证码登录成功：手机号={}，用户ID={}", userPhone, user.getId());
         UserVO userVO = userService.getUserVO(user);
         return ResultUtil.success(userVO);
     }
@@ -106,7 +109,9 @@ public class UserController {
         if (request == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
+        User loginUser = userService.getLoginUserAllowNull(request);
         int result = userService.userLogout(request);
+        log.info("用户退出登录成功：用户ID={}", loginUser == null ? null : loginUser.getId());
         return ResultUtil.success(result);
     }
 

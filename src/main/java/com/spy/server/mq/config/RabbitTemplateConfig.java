@@ -24,15 +24,15 @@ public class RabbitTemplateConfig {
     public void init() {
         rabbitTemplate.setConfirmCallback(this::confirmCallback);
         rabbitTemplate.setReturnsCallback(returned -> {
-            log.error("消息路由失败, exchange={}, routingKey={}, replyText={}, body={}", returned.getExchange(), returned.getRoutingKey(), returned.getReplyText(), new String(returned.getMessage().getBody()));
+            log.error("消息路由失败：交换机={}，路由键={}，失败原因={}，消息体={}", returned.getExchange(), returned.getRoutingKey(), returned.getReplyText(), new String(returned.getMessage().getBody()));
         });
     }
 
     private void confirmCallback(CorrelationData correlationData, boolean ack, String cause) {
         if(ack) {
-            log.info("消息到达交换机成功, correlationId={}", correlationData == null ? "null" : correlationData.getId());
+            log.info("消息到达交换机成功：关联ID={}", correlationData == null ? "null" : correlationData.getId());
         } else {
-            log.error("消息到达交换机失败, correlationId={}, cause={}", correlationData == null ? null : correlationData.getId(), cause);
+            log.error("消息到达交换机失败：关联ID={}，失败原因={}", correlationData == null ? null : correlationData.getId(), cause);
         }
     }
 }

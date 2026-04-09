@@ -24,40 +24,25 @@ public class MqConsumeRecordServiceImpl
     public boolean tryInsert(String msgId, String bizType) {
         synchronized ((msgId + bizType).intern()) {
             try {
-                // 先去数据库中查询一下是否已经存在但是没有成功
                 QueryWrapper<MqConsumeRecord> queryWrapper = new QueryWrapper<>();
                 queryWrapper.eq("bizType", bizType);
                 queryWrapper.eq("msgId", msgId);
                 MqConsumeRecord data = this.getOne(queryWrapper);
                 if (data == null) {
-                    // 还没有处理过这个消息，那么正常的处理
-                    LocalDateTime now = LocalDateTime.now();
-
                     MqConsumeRecord rec = new MqConsumeRecord();
-
                     rec.setMsgId(msgId);
                     rec.setBizType(bizType);
                     rec.setStatus(0);
-
-                    boolean result = this.save(rec);
-
+                    this.save(rec);
                     return true;
                 }
-                // 就是已经存在了，看看他上一次是否处理成功了
+
                 Integer status = data.getStatus();
-                /**
-                 * 0：处理中
-                 * 1：成功
-                 * 2：失败
-                 */
                 if (status == 0) {
-                    // 如果是处理中，那就返回false
                     return false;
                 } else if (status == 1) {
-                    // 如果是已经成功了，那就返回false
                     return false;
                 } else if (status == 2) {
-                    // 更新状态为0，然后返回true
                     data.setStatus(0);
                     boolean updateRes = this.updateById(data);
                     if (!updateRes) {
@@ -67,7 +52,7 @@ public class MqConsumeRecordServiceImpl
                 }
                 return true;
             } catch (DuplicateKeyException e) {
-                log.warn("重复消息, msgId={}, bizType={}", msgId, bizType);
+                log.warn("检测到重复消息：消息ID={}，业务类型={}", msgId, bizType);
                 return false;
             }
         }

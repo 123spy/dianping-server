@@ -33,6 +33,6 @@ public class ShopRatingEventProducer {
                 correlationData
         );
 
-        log.info("发送评分变更信息成功, shopId={}, ratingId={}, action={}", event.getShopId(), event.getRatingId(), event.getAction());
+        log.info("发送评分变更消息成功：店铺ID={}，评分ID={}，操作类型={}", event.getShopId(), event.getRatingId(), event.getAction());
     }
 }

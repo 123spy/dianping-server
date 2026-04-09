@@ -49,7 +49,7 @@ public class AliyunSmsUtil {
         String outId = UUID.randomUUID().toString().replace("-", "");
         String templateParam = String.format("{\"code\":\"%s\",\"min\":\"%d\"}", code, getValidMinutes());
 
-        log.info("Preparing Aliyun SMS request. phone={}, code={}, validMinutes={}, ttlSeconds={}, templateCode={}, outId={}",
+        log.info("准备发送阿里云短信：手机号={}，验证码={}，有效分钟数={}，缓存秒数={}，模板编号={}，流水号={}",
                 phone, code, getValidMinutes(), ttlSeconds, aliyunSmsProperties.getTemplateCode(), outId);
 
         SendSmsVerifyCodeRequest request = new SendSmsVerifyCodeRequest()
@@ -72,7 +72,7 @@ public class AliyunSmsUtil {
         String responseOutId = response.getBody().getModel() == null ? null : response.getBody().getModel().getOutId();
         String requestId = response.getBody().getModel() == null ? null : response.getBody().getModel().getRequestId();
 
-        log.info("Aliyun Dypns SMS response. phone={}, code={}, success={}, code={}, message={}, requestId={}, bizId={}, outId={}",
+        log.info("阿里云短信发送响应：手机号={}，验证码={}，是否成功={}，响应编码={}，响应信息={}，请求ID={}，业务ID={}，流水号={}",
                 phone, code, success, bizCode, message, requestId, bizId, responseOutId);
 
         if (!"OK".equalsIgnoreCase(bizCode)) {

@@ -38,7 +38,7 @@ public class ShopRatingChangedConsumer {
             }
 
             channel.basicAck(deliveryTag, false);
-            log.info("消费评分变更消息成功, shopId={}", shopId);
+            log.info("消费评分变更消息成功：店铺ID={}", shopId);
         } catch (Exception e) {
             log.error("消费评分变更消息失败", e);
             channel.basicNack(deliveryTag, false, false);
